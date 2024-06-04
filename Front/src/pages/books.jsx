@@ -1,125 +1,264 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { apiBiblioteca } from '../api/server';
-import Card from '../components/Card';
+import React, { useState, useEffect } from "react";
+import { apiBiblioteca } from "../api/server";
 
-export const Books = () => {
-  const [books, setBooks] = useState(null);
-  const [search, setSearch] = useState('');
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [newBook, setNewBook] = useState({
-    nome: '',
-    autor: '',
-    categoria: '',
-    descricao: '',
-    estoque: 0
-  });
+export function Books() {
+  const [content, setContent] = useState(<BookList showForm={showForm} />);
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-  };
+  function showList() {
+    setContent(<BookList showForm={showForm} />);
+  }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    apiBiblioteca.get(`/books/${search}`)
-   .then(response => {
-        if (!response.data.results) {
-          setErrorMessage('Nenhum livro encontrado! Tente procurar outro termo!');
-        } else {
-          setBooks(response.data.results);
-          setErrorMessage(null);
-        }
-      })
-   .catch((error) => {
-        if (error.response.status === "404") {
-          setErrorMessage('Nenhum livro encontrado! Tente procurar outro termo!');
-        }
-        if (error.response.status === "500") {
-          setErrorMessage('Erro de conexão!');
-        }
-        console.error(error);
-      });
-  };
-
-  const handleCreateBook = (event) => {
-    event.preventDefault();
-    apiBiblioteca.post(`/book`, newBook)
-   .then(response => {
-        setErrorMessage(null);
-        setNewBook({
-          nome: '',
-          autor: '',
-          categoria: '',
-          descricao: '',
-          estoque: 0
-        });
-        alert('Livro criado com sucesso!');
-      })
-   .catch((error) => {
-        setErrorMessage('Erro ao criar livro!');
-        console.error(error);
-      });
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setNewBook({...newBook, [name]: value });
-  };
+  function showForm(book) {
+    setContent(<BookForm book={book} showList={showList} />);
+  }
 
   return (
-    <div>
-      <h1>Livros</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={search} onChange={handleSearch} placeholder="Buscar livro" />
-        <button type="submit">Buscar</button>
-      </form>
-      <h2>Criar novo livro</h2>
-      <form onSubmit={handleCreateBook}>
-        <label>
-          Nome:
-          <input type="text" name="nome" value={newBook.nome} onChange={handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Autor:
-          <input type="text" name="autor" value={newBook.autor} onChange={handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Categoria:
-          <input type="text" name="categoria" value={newBook.categoria} onChange={handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Descrição:
-          <textarea name="descricao" value={newBook.descricao} onChange={handleInputChange} />
-        </label>
-        <br />
-        <label>
-          Estoque:
-          <input type="number" name="estoque" value={newBook.estoque} onChange={handleInputChange} />
-        </label>
-        <br />
-        <button type="submit">Criar livro</button>
-      </form>
-      {errorMessage && (
-        <p>{errorMessage}</p>
-      )}
-      {books && (
-        <ul>
-          {books.map(book => (
-            <li key={book.id}>
-              <h2>{book.nome}</h2>
-              <p>ID: {book.id}</p>
-              <p>Autor: {book.autor}</p>
-              <p>Categoria: {book.categoria}</p>
-              <p>Descrição: {book.descricao}</p>
-              <p>Estoque: {book.estoque}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="container my-5">
+      {content}
     </div>
+  );
+}
+
+function BookList(props) {
+  const [books, setBooks] = useState([]);
+
+  function fetchBooks() {
+    apiBiblioteca.get(`/books`)
+     .then((response) => {
+        if (!response.ok) {
+          throw new Error("Unexpected Server Response");
+        }
+        return response.json();
+      })
+     .then((data) => {
+        setBooks(data);
+      })
+     .catch((error) => console.log(error.message));
+  }
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  function deleteBook(id) {
+    apiBiblioteca.delete(`/book/${id}`)
+     .then((response) => response.json())
+     .then((data) => fetchBooks());
+  }
+
+  return (
+    <>
+      <h2 className="text-center mb-3">Lista de Livros</h2>
+      <button onClick={() => props.showForm({})} className="btn btn-primary me-2" type="button">
+        + Livro
+      </button>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Estoque</th>
+            <th>Criado Em</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {books.map((book, index) => {
+            return (
+              <tr key={index}>
+                <td>{book.id}</td>
+                <td>{book.nome}</td>
+                <td>{book.autor}</td>
+                <td>{book.categoria}</td>
+                <td>{book.estoque}</td>
+                <td>{book.criadoEm}</td>
+                <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                  <button
+                    onClick={() => props.showForm(book)}
+                    className="btn btn-primary btn-sm me-2"
+                    type="button"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => deleteBook(book.id)}
+                    className="btn btn-danger btn-sm"
+                    type="button"
+                  >
+                    Deletar
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function BookForm(props) {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const book = Object.fromEntries(formData.entries());
+
+ 
+
+    if (props.book.id) {
+      apiBiblioteca.put(`/book/${props.book.id}`)
+       .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unexpected Server Response");
+          }
+          return response.json();
+        })
+       .then((data) => {
+          props.showList();
+    setErrorMessage("");
+        })
+      .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      book.createdAt = new Date().toISOString().slice(0, 10);
+      apiBiblioteca.post(`/book`)
+      .then((response) => {
+          if (!response.ok) {
+            throw new Error("Unexpected Server Response");
+          }
+          return response.json();
+        })
+      .then((data) => {
+          props.showList();
+          setErrorMessage("");
+        })
+      .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  }
+
+  return (
+    <>
+      <h2 className="text-center mb-3">
+        {props.book.id? "Editar Livro" : "Criar Novo Livro"}
+      </h2>
+      <div className="row">
+        <div className="col-lg-6 mx-auto">
+          {errorMessage}
+
+          <form onSubmit={(event) => handleSubmit(event)}>
+            {props.book.id && (
+              <div className="row mb-3">
+                <label className="col-sm4 col-form-label">ID</label>
+                <div className="col-sm-8">
+                  <input
+                    readOnly
+                    name="id"
+                    type="text"
+                    className="form-control-plaintext"
+                    defaultValue={props.book.id}
+                    placeholder="ID"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="row mb-3">
+              <label className="col-sm4 col-form-label">Título</label>
+              <div className="col-sm-8">
+                <input
+                  name="titulo_nome"
+                  type="text"
+                  className="form-control"
+                  defaultValue={props.book.titulo_nome}
+                  placeholder="Título"
+                />
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <label className="col-sm4 col-form-label">Autor</label>
+              <div className="col-sm-8">
+                <input
+                  name="autor_nome"
+                  type="text"
+                  className="form-control"
+                  defaultValue={props.book.autor_nome}
+                  placeholder="Autor"
+                />
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <label className="col-sm4 col-form-label">Descrição</label>
+              <div className="col-sm-8">
+                <input
+                  name="descricao"
+                  type="text"
+                  className="form-control"
+                  defaultValue={props.book.descricao}
+                  placeholder="Descrição"
+                />
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <label className="col-sm4 col-form-label">Categoria</label>
+              <div className="col-sm-8">
+                <select
+                  className="form-select"
+                  name="categoria"
+                  defaultValue={props.book.categoria}
+                >
+                  <option value="Other">Other</option>
+                  <option value="Fantasy">Fantasy</option>
+                  <option value="Action">Action</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="row mb-3">
+              <label className="col-sm4 col-form-label">Estoque</label>
+              <div className="col-sm-8">
+                <input
+                  name="estoque"
+                  type="number"
+                  className="form-control"
+                  defaultValue={props.book.estoque}
+                  placeholder="Estoque"
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="offset-sm-4 col-sm-4 d-grid">
+                <button className="btn btn-primary btn-sm me-3" type="submit">
+                  Salvar
+                </button>
+              </div>
+              <div className="col-sm-4 d-grid">
+                <button
+                  onClick={() => props.showList()}
+                  className="btn btn-secondary me-2"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   );
 }
 

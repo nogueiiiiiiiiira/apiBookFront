@@ -5,14 +5,21 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import Books from "./pages/books";
 import './index.css'
+
+import BookSearch from "./pages/teste";
+import Books from "./pages/books";
 
 const router = createBrowserRouter([
 
   {
-    path: "/",
+    path: "/books",
     element:  <Books />,
+  },
+
+  {
+    path: "/",
+    element:  <BookSearch />,
   }
 ]);
 
