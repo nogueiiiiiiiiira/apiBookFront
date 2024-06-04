@@ -110,7 +110,15 @@ function BookForm(props) {
 
     const book = Object.fromEntries(formData.entries());
 
- 
+    if (!book.nome ||!book.autor ||!book.categoria ||!book.estoque ||!book.descricao) {
+      console.log("Please, provide all the required fields!");
+      setErrorMessage(
+        <div className="alert alert-warning" role="alert">
+          Please, provide all the required fields!
+        </div>
+      );
+      return;
+    }
 
     if (props.book.id) {
       apiBiblioteca.put(`/book/${props.book.id}`)
