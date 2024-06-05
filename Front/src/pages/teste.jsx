@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { apiBiblioteca } from '../api/server';
-import Card from '../components/Card';
 
 export function BookSearch() {
   const [books, setBooks] = useState(null);
@@ -31,7 +30,7 @@ export function BookSearch() {
     setSearch(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmitSearch = (event) => {
     event.preventDefault();
     apiBiblioteca.get(`/books/${search}`)
     .then(response => {
@@ -47,7 +46,7 @@ export function BookSearch() {
   return (
     <div>
       <h1>Livros</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmitSearch}>
         <input type="text" value={search} onChange={handleSearch} placeholder="Buscar livro" />
         <button type="submit">Buscar</button>
       </form>

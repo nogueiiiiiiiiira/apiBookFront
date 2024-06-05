@@ -132,6 +132,11 @@ function BookForm(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const { nome, autor, descricao, categoria, estoque } = newBook;
+    if (!nome ||!autor ||!descricao ||!categoria ||!estoque) {
+      setErrorMessage("Please, provide all the required fields!");
+      return;
+    }
     if (props.book.id) {
       updateBook(props.book.id, newBook);
     } else {
@@ -140,23 +145,46 @@ function BookForm(props) {
   };
 
   const createBook = (book) => {
-    apiBiblioteca.post(`/books`, book)
+    apiBiblioteca.get(`/books`)
      .then((response) => {
-        setErrorMessage(null);
-        setNewBook({
-          nome: '',
-          autor: '',
-          descricao: '',
-          categoria: '',
-          estoque: '',
+        const existingBook = response.data.find((existingBook) => {
+          return (
+            existingBook.nome === book.nome &&
+            existingBook.autor === book.autor &&
+            existingBook.categoria === book.categoria
+          );
         });
-        alert('Livro criado com sucesso!');
+  
+        if (existingBook) {
+
+          existingBook.estoque = (parseInt(existingBook.estoque) + parseInt(book.estoque)).toString();
+          updateBook(existingBook.id, existingBook);
+          alert('Livro já existente! Livros adicionados ao estoque!');
+        } else {
+
+          apiBiblioteca.post(`/books`, book)
+           .then((response) => {
+              setErrorMessage(null);
+              setNewBook({
+                nome: '',
+                autor: '',
+                descricao: '',
+                categoria: '',
+                estoque: '',
+              });
+              alert('Livro criado com sucesso!');
+            })
+           .catch((error) => {
+              setErrorMessage('Erro ao criar livro!');
+              console.error(error);
+            });
+        }
+        
       })
-     .catch((error) => {
-        setErrorMessage('Erro ao criar livro!');
-        console.error(error);
-      });
-  };
+     .catch((error) => console.error(error));
+     props.showList(true);
+
+      };
 
   const updateBook = (id, book) => {
     apiBiblioteca.put(`/books/${id}`, book)
@@ -168,6 +196,8 @@ function BookForm(props) {
         setErrorMessage('Erro ao atualizar livro!');
         console.error(error);
       });
+      
+      props.showList(true);
   };
 
 
@@ -178,24 +208,12 @@ function BookForm(props) {
       </h2>
       <div className="row">
         <div className="col-lg-6 mx-auto">
-          {errorMessage}
-
+          {errorMessage && (
+            <div class="alert alert-warning" role="alert">
+              {errorMessage}
+            </div>
+          )}
           <form onSubmit={(event) => handleSubmit(event)}>
-            {props.book.id && (
-              <div className="row mb-3">
-                <label className="col-sm4 col-form-label">ID</label>
-                <div className="col-sm-8">
-                  <input
-                    readOnly
-                    name="id"
-                    type="text"
-                    className="form-control-plaintext"
-                    defaultValue={props.book.id}
-                    placeholder="ID"
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="row mb-3">
               <label className="col-sm4 col-form-label">Título</label>
@@ -248,9 +266,9 @@ function BookForm(props) {
                   defaultValue={props.book.categoria}
                   onChange={handleInputChange}
                 >
-                  <option value="Other">Other</option>
-                  <option value="Fantasy">Fantasy</option>
-                  <option value="Action">Action</option>
+                  <option value="OUTRO">OUTRO</option>
+                  <option value="FANTASIA">FANTASIA</option>
+                  <option value="FICÇÃO">FICÇÃO</option>
                 </select>
               </div>
             </div>
