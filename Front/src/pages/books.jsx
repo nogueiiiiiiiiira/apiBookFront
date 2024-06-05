@@ -63,6 +63,8 @@ function BookList(props) {
       <button onClick={() => props.showForm({})} className="btn btn-primary me-2" type="button">
         + Livro
       </button>
+      <br />
+      <br />
       <table className="table">
         <thead>
           <tr>
