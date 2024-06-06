@@ -10,6 +10,7 @@ import './index.css'
 import BookSearch from "./pages/teste";
 import Books from "./pages/books";
 import Librarians from "./pages/librarians";
+import Readers from "./pages/readers";
 
 const router = createBrowserRouter([
 
@@ -27,6 +28,12 @@ const router = createBrowserRouter([
     path: "/librarians",
     element:  <Librarians />,
   },
+
+  {
+    path: "/readers",
+    element:  <Readers />,
+  }
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
