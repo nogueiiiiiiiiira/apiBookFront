@@ -146,7 +146,7 @@ function BookForm(props) {
 
   const createBook = (book) => {
     apiBiblioteca.get(`/books`)
-     .then((response) => {
+      .then((response) => {
         const existingBook = response.data.find((existingBook) => {
           return (
             existingBook.nome === book.nome &&
@@ -156,14 +156,12 @@ function BookForm(props) {
         });
   
         if (existingBook) {
-
           existingBook.estoque = (parseInt(existingBook.estoque) + parseInt(book.estoque)).toString();
           updateBook(existingBook.id, existingBook);
-          alert('Livro já existente! Livros adicionados ao estoque!');
+          alert('Livros adicionados ao estoque!');
         } else {
-
           apiBiblioteca.post(`/books`, book)
-           .then((response) => {
+            .then((response) => {
               setErrorMessage(null);
               setNewBook({
                 nome: '',
@@ -174,30 +172,28 @@ function BookForm(props) {
               });
               alert('Livro criado com sucesso!');
             })
-           .catch((error) => {
+            .catch((error) => {
               setErrorMessage('Erro ao criar livro!');
               console.error(error);
             });
         }
-        
       })
-     .catch((error) => console.error(error));
-     props.showList(true);
-
-      };
+      .catch((error) => console.error(error));
+    window.location.reload();
+  };
 
   const updateBook = (id, book) => {
     apiBiblioteca.put(`/books/${id}`, book)
-     .then((response) => {
+      .then((response) => {
         setErrorMessage(null);
         alert('Livro atualizado com sucesso!');
       })
-     .catch((error) => {
+      .catch((error) => {
         setErrorMessage('Erro ao atualizar livro!');
         console.error(error);
       });
-      
-      props.showList(true);
+  
+    window.location.reload();
   };
 
 

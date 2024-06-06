@@ -9,6 +9,7 @@ import './index.css'
 
 import BookSearch from "./pages/teste";
 import Books from "./pages/books";
+import Librarians from "./pages/librarians";
 
 const router = createBrowserRouter([
 
@@ -20,7 +21,12 @@ const router = createBrowserRouter([
   {
     path: "/",
     element:  <BookSearch />,
-  }
+  },
+  
+  {
+    path: "/librarians",
+    element:  <Librarians />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
