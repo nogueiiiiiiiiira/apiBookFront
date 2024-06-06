@@ -9,18 +9,13 @@ import './index.css'
 
 import BookSearch from "./pages/teste";
 import Books from "./pages/books";
+import Librarians from "./pages/Librarians";
 
 const router = createBrowserRouter([
 
-  {
-    path: "/books",
-    element:  <Books />,
-  },
-
-  {
-    path: "/",
-    element:  <BookSearch />,
-  }
+  { path: "/", element:  <Librarians />},
+  { path: "/Books", element:  <Books />},
+  { path: "/BookSearch", element:  <BookSearch />},
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
