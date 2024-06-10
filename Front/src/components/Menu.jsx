@@ -23,7 +23,7 @@ function Menu() {
           <ul className="navbar-nav">
             <li className="nav-item">
               <Link className="nav-link" to="/librarians">
-                Bibliotecarios
+                Bibliotecários
               </Link>
             </li>
             <li className="nav-item">

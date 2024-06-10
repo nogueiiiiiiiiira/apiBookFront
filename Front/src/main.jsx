@@ -14,6 +14,7 @@ import Books from "./pages/books";
 import BookSearch from "./pages/bookSearch";
 import Readers from "./pages/readers";
 import ReadersSearch from "./pages/readerSearch";
+import Rets from "./pages/returns";
 
 const router = createBrowserRouter([
 
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
   { path: "/Books", element:  <Books />},
   { path: "/BookSearch", element:  <BookSearch />},
   { path: "/Readers", element:  <Readers />},
-  { path: "/ReadersSearch", element:  <ReadersSearch />}
+  { path: "/ReadersSearch", element:  <ReadersSearch />},
+  { path: "/returns", element: <Rets /> }
 
 ]);
 

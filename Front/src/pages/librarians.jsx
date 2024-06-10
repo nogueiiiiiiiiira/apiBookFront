@@ -166,13 +166,19 @@ function LibrarianForm(props) {
         const emailExists = librarians.some((lib) => lib.email === librarian.email);
         const telefoneExists = librarians.some((lib) => lib.telefone === librarian.telefone);
   
+        apiBiblioteca.get(`/readers`)
+          .then((response) => {
+            const readers = response.data;
+            const cpfExistsInReaders = readers.some((reader) => reader.cpf === librarian.cpf);
+            const emailExistsInReaders = readers.some((reader) => reader.email === librarian.email);
+            const telefoneExistsInReaders = readers.some((reader) => reader.telefone === librarian.telefone);
   
-            if (cpfExists) {
-              setErrorMessage('CPF já existe no banco!');
-            } else if (emailExists) {
-              setErrorMessage('Email já existe no banco!');
-            } else if (telefoneExists) {
-              setErrorMessage('Telefone já existe no banco!');
+            if (cpfExists || cpfExistsInReaders) {
+              setErrorMessage('CPF já existe!');
+            } else if (emailExists || emailExistsInReaders) {
+              setErrorMessage('Email já existe!');
+            } else if (telefoneExists || telefoneExistsInReaders) {
+              setErrorMessage('Telefone já existe!');
             } else {
               apiBiblioteca.post(`/librarians`, librarian)
                 .then((response) => {
@@ -197,6 +203,10 @@ function LibrarianForm(props) {
                   console.error(error);
                 });
             }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
       })
       .catch((error) => {
         console.error(error);
