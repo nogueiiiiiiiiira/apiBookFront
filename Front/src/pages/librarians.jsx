@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
-import Menu from "../components/Menu";
+import Menu from "../components/Menu"
 
 export function Librarians() {
   const [content, setContent] = useState(<LibrarianList showForm={showForm} />);
