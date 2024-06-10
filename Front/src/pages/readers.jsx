@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
+import Menu from "../components/Menu";
+import loans from "./loans";
 
 export function Readers() {
   const [content, setContent] = useState(null);
@@ -17,9 +19,12 @@ export function Readers() {
   }
 
   return (
+    <>
+    <Menu /> 
     <div className="container my-5">
       {content}
     </div>
+    </>
   );
 }
 
@@ -76,37 +81,38 @@ function ReaderList(props) {
             <th>Ação</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody>         
           {
-          readers.map((reader, index) => {
-            return (
-              <tr key={index}>
-                <td>{reader.id}</td>
-                <td>{reader.nome}</td>
-                <td>{reader.cpf}</td>
-                <td>{reader.email}</td>
-                <td>{reader.telefone}</td>
-                <td>{reader.dataNasc}</td>
-                <td>{reader.criadoEm}</td>
-                <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-                  <button
-                    onClick={() => props.showForm(reader)}
-                    className="btn btn-primary btn-sm me-2"
-                    type="button"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => deleteReader(reader.id)}
-                    className="btn btn-danger btn-sm"
-                    type="button"
-                  >
-                    Deletar
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+            readers.map((reader, index) => {
+              return (
+                <tr key={index}>
+                  <td>{reader.id}</td>
+                  <td>{reader.nome}</td>
+                  <td>{reader.cpf}</td>
+                  <td>{reader.email}</td>
+                  <td>{reader.telefone}</td>
+                  <td>{reader.dataNasc}</td>
+                  <td>{reader.criadoEm}</td>
+                  <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                    <button
+                      onClick={() => props.showForm(reader)}
+                      className="btn btn-primary btn-sm me-2"
+                      type="button"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => deleteReader(reader.id)}
+                      className="btn btn-danger btn-sm"
+                      type="button"
+                    >
+                      Deletar
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          }
         </tbody>
       </table>
     </>

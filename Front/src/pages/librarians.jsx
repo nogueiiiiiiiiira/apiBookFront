@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
+import Menu from "../components/Menu";
 
 export function Librarians() {
   const [content, setContent] = useState(null);
@@ -17,9 +18,12 @@ export function Librarians() {
   }
 
   return (
+    <>
+    <Menu />
     <div className="container my-5">
       {content}
     </div>
+    </>
   );
 }
 

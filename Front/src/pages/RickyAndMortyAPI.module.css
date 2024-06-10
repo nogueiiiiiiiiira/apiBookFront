@@ -1,0 +1,41 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+.wrapRickyAndMorty{
+    padding-top: 5vh;
+    width: 100%;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2vh;
+    z-index: -1;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+input{
+    height: 20px;
+    width: 20vh;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: lightgray;
+    font-size: 1.5vh;
+}
+
+.cardsRickyAndMorty{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2vw;
+    margin: 1vw;
+}
+
+.cardCharacter{
+    height: 400px;
+}

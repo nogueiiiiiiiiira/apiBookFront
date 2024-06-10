@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
+import Menu from "../components/Menu"
 
 export function Books() {
   const [content, setContent] = useState(<BookList showForm={showForm} />);
@@ -13,9 +14,12 @@ export function Books() {
   }
 
   return (
+    <>
+    <Menu />
     <div className="container my-5">
       {content}
     </div>
+    </>
   );
 }
 
@@ -91,6 +95,13 @@ function BookList(props) {
                 <td>{book.estoque}</td>
                 <td>{book.criadoEm}</td>
                 <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                  <button
+                    onClick={() => props.showForm(loans)}
+                    className="btn btn-warning btn-sm me-2"
+                    type="button"
+                  >
+                    Emprestar
+                  </button>
                   <button
                     onClick={() => props.showForm(book)}
                     className="btn btn-primary btn-sm me-2"
@@ -262,9 +273,19 @@ function BookForm(props) {
                   defaultValue={props.book.categoria}
                   onChange={handleInputChange}
                 >
-                  <option value="OUTRO">OUTRO</option>
-                  <option value="FANTASIA">FANTASIA</option>
-                  <option value="FICÇÃO">FICÇÃO</option>
+                  <option value="Aventura">Aventura</option>
+                  <option value="Autoajuda">Autoajuda</option>
+                  <option value="Biografia e Autobiografia">Biografia e Autobiografia</option>
+                  <option value="Clássicos">Clássicos</option>
+                  <option value="Desenvolvimento Pessoal">Desenvolvimento Pessoal</option>
+                  <option value="Distopia">Distopia</option>
+                  <option value="Ficção Científica">Ficção Científica</option>
+                  <option value="Fantasia">Fantasia</option>
+                  <option value="História">História</option>
+                  <option value="Juvenil">Juvenil</option>
+                  <option value="Poesia">Poesia</option>
+                  <option value="Romance">Romance</option>
+                  <option value="Suspense e Mistério">Suspense e Mistério</option>
                 </select>
               </div>
             </div>

@@ -7,32 +7,23 @@ import {
 
 import './index.css'
 
-import BookSearch from "./pages/teste";
-import Books from "./pages/books";
+import { RickAndMortyAPI } from "./pages/RickyAndMortyAPI";
 import Librarians from "./pages/librarians";
+import LibrariansSearch from "./pages/librarianSearch";
+import Books from "./pages/books";
+import BookSearch from "./pages/bookSearch";
 import Readers from "./pages/readers";
+import ReadersSearch from "./pages/readerSearch";
 
 const router = createBrowserRouter([
 
-  {
-    path: "/books",
-    element:  <Books />,
-  },
-
-  {
-    path: "/",
-    element:  <BookSearch />,
-  },
-  
-  {
-    path: "/librarians",
-    element:  <Librarians />,
-  },
-
-  {
-    path: "/readers",
-    element:  <Readers />,
-  }
+  { path: "/", element:  <RickAndMortyAPI />},
+  { path: "/Librarians", element:  <Librarians />},
+  { path: "/LibrariansSearch", element:  <LibrariansSearch />},
+  { path: "/Books", element:  <Books />},
+  { path: "/BookSearch", element:  <BookSearch />},
+  { path: "/Readers", element:  <Readers />},
+  { path: "/ReadersSearch", element:  <ReadersSearch />}
 
 ]);
 
