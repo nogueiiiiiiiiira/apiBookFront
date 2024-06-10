@@ -158,13 +158,6 @@ function ReaderForm(props) {
   };
 
   const createReader = (reader) => {
-    apiBiblioteca.get(`/librarians`)
-      .then((response) => {
-        const librarians = response.data;
-        const cpfExists = librarians.some((lib) => lib.cpf === reader.cpf);
-        const emailExists = librarians.some((lib) => lib.email === reader.email);
-        const telefoneExists = librarians.some((lib) => lib.telefone === reader.telefone);
-  
         apiBiblioteca.get(`/readers`)
           .then((response) => {
             const readers = response.data;
@@ -172,11 +165,11 @@ function ReaderForm(props) {
             const emailExistsInReaders = readers.some((reader) => reader.email === reader.email);
             const telefoneExistsInReaders = readers.some((reader) => reader.telefone === reader.telefone);
   
-            if (cpfExists || cpfExistsInReaders) {
+            if (cpfExistsInReaders) {
               setErrorMessage('CPF já existe!');
-            } else if (emailExists || emailExistsInReaders) {
+            } else if (emailExistsInReaders) {
               setErrorMessage('Email já existe!');
-            } else if (telefoneExists || telefoneExistsInReaders) {
+            } else if (telefoneExistsInReaders) {
               setErrorMessage('Telefone já existe!');
             } else {
               apiBiblioteca.post(`/readers`, reader)
@@ -205,10 +198,6 @@ function ReaderForm(props) {
           .catch((error) => {
             console.error(error);
           });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   };
 
   const updateReader = (id, reader) => {
