@@ -73,8 +73,8 @@ function RetList(props) {
         <thead>
           <tr>
             <th>ID</th>
-            <th>CPF</th>
-            <th>ID Livro</th>
+            <th>CPF do Leitor</th>
+            <th>ID do Livro</th>
             <th>Previsão de Entrega</th>
             <th>Data de Entrega</th>
             <th>Multa</th>

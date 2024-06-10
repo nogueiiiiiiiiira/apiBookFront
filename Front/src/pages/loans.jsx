@@ -73,10 +73,10 @@ function LoanList(props) {
         <thead>
           <tr>
             <th>ID</th>
-            <th>CPF</th>
-            <th>idLivro</th>
-            <th>dataEmpréstimo</th>
-            <th>dataDevolução</th>
+            <th>CPF do Leitor</th>
+            <th>ID do Livro</th>
+            <th>Data do Empréstimo</th>
+            <th>Previsão da Devolução</th>
             <th>Ação</th>
           </tr>
         </thead>
@@ -90,7 +90,6 @@ function LoanList(props) {
                 <td>{loan.idLivro}</td>
                 <td>{loan.dataEmp}</td>
                 <td>{loan.dataDev}</td>
-                <td>{loan.criadoEm}</td>
                 <td style={{ width: "10px", whiteSpace: "nowrap" }}>
                   <button
                     onClick={() => props.showForm(loan)}
