@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
-import loans from "./loans";
 
 export function Readers() {
   const [content, setContent] = useState(null);

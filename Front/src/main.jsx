@@ -13,6 +13,7 @@ import Readers from "./pages/readers";
 import Rets from "./pages/returns";
 import Librarians from "./pages/librarians";
 import Loans from "./pages/loans";
+import Fines from "./pages/fines";
 
 const router = createBrowserRouter([
 
@@ -21,7 +22,8 @@ const router = createBrowserRouter([
   { path: "/Readers", element:  <Readers />},
   { path: "/Returns", element: <Rets /> },
   { path: "/Librarians", element: <Librarians />},
-  { path: "/Loans", element: <Loans />}
+  { path: "/Loans", element: <Loans />},
+  { path: "/Fines", element: <Fines />}
 
 ]);
 
