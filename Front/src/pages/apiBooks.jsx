@@ -33,10 +33,12 @@ export const ApiBooksComponent = () => {
         }
     };
 
+    // useEffect para carregar a primeira página de resultados ao iniciar
     useEffect(() => {
-        fetchBooks("bestsellers");
+        fetchBooks("bestsellers"); // Pode substituir "bestsellers" por qualquer termo de busca padrão
     }, []);
 
+    // useEffect para buscar livros conforme o termo de busca é atualizado
     useEffect(() => {
         if (searchTerm) {
             fetchBooks(searchTerm);
@@ -47,7 +49,7 @@ export const ApiBooksComponent = () => {
         <>
             <Menu />
             <div className={style.wrapBooks}>
-                <h1>Google Books API</h1>
+                <h1>Busca de Livros na Google Books API</h1>
                 <input
                     type="text"
                     placeholder="Digite o nome do livro"
@@ -61,8 +63,8 @@ export const ApiBooksComponent = () => {
                             <Card
                                 key={book.id}
                                 title={book.volumeInfo.title}
-                                desc={book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : "Autor desconhecido"}
-                                value={book.volumeInfo.description ? book.volumeInfo.description : "Sem descrição"}
+                                desc={book.volumeInfo.description || "Descrição não disponível"}
+                                value={book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : "Autor desconhecido"}
                                 imgSrc2={book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "https://via.placeholder.com/150"}
                             />
                         ))

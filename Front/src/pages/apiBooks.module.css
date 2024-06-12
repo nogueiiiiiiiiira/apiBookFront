@@ -1,41 +1,42 @@
-*{
-    padding: 0;
-    margin: 0;
-}
-
-.wrapRickyAndMorty{
-    padding-top: 5vh;
-    width: 100%;
-    background-color: var(--bg-primary);
+/* Estilo da seção que envolve todos os cartões de livros */
+.cardsBooks {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2vh;
-    z-index: -1;
-    flex-wrap: wrap;
-    flex-direction: column;
-}
-
-input{
-    height: 20px;
-    width: 20vh;
+    flex-wrap: wrap; /* Permite que os cartões se alinhem em várias linhas */
+    justify-content: center; /* Centraliza os cartões na horizontal */
+    gap: 16px; /* Espaçamento entre os cartões */
+    padding: 20px;
+  }
+  
+  /* Estilo do contêiner principal */
+  .wrapBooks {
+    text-align: center; /* Centraliza o texto no contêiner */
+    padding: 20px;
+    background-color: #f5f5f5; /* Cor de fundo para a página */
+    min-height: 100vh; /* Garante que a página ocupe pelo menos a altura da janela */
+  }
+  
+  /* Estilo do título principal */
+  .wrapBooks h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilo dos inputs */
+  .wrapBooks input[type="text"] {
     padding: 10px;
-    border-radius: 10px;
-    border: none;
-    background-color: lightgray;
-    font-size: 1.5vh;
-}
-
-.cardsRickyAndMorty{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 2vw;
-    margin: 1vw;
-}
-
-.cardCharacter{
-    height: 400px;
-}
+    margin: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 200px;
+  }
+  
+  /* Estilo responsivo para a seção de cartões */
+  @media (max-width: 600px) {
+    .cardsBooks {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
