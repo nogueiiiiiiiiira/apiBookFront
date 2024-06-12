@@ -1,8 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import style from './Card.module.css';
 
 const Card = ({ title, imgSrc2, desc, value }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Define o limite de caracteres a serem exibidos inicialmente
+  const maxDescLength = 100;
+
+  // Função para alternar entre expandir e retrair a descrição
+  const toggleDescription = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  // Renderiza a descrição truncada ou completa
+  const renderDescription = () => {
+    if (desc.length > maxDescLength && !isExpanded) {
+      return (
+        <>
+          {desc.substring(0, maxDescLength)}...
+          <span className={style.readMore} onClick={toggleDescription}> Mostrar mais</span>
+        </>
+      );
+    } else if (isExpanded) {
+      return (
+        <>
+          {desc}
+          <span className={style.readMore} onClick={toggleDescription}> Mostrar menos</span>
+        </>
+      );
+    } else {
+      return desc;
+    }
+  };
+
   return (
     <div className={style.wrapCard}>
       <div className={style.Card}>
@@ -15,7 +46,7 @@ const Card = ({ title, imgSrc2, desc, value }) => {
           height="auto"
         />
         <div className={style.cardBody}>
-          <p className={style.cardText}>{desc || 'Descrição não disponível'}</p>
+          <p className={style.cardText}>{renderDescription()}</p>
           <p>{value || 'Sem informação adicional'}</p>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { ApiBooksComponent } from "./pages/apiBooks";
 import Books from "./pages/books";
 import Readers from "./pages/readers";
 import Rets from "./pages/returns";
-import Librarians from "./pages/Librarians";
+import Librarians from "./pages/librarians";
 import Loans from "./pages/loans";
 
 const router = createBrowserRouter([
