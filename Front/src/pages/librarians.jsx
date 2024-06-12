@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
-import Menu from "../components/Menu";
+import Menu from "../components/Menu"
 
 export function Librarians() {
   const [content, setContent] = useState(<LibrarianList showForm={showForm} />);
@@ -77,9 +77,9 @@ function LibrarianList(props) {
             <th>CPF</th>
             <th>Email</th>
             <th>Telefone</th>
-            <th>Data de Nascimento</th>
+            <th>DataNasc</th>
+            <th>Senha</th>
             <th>Criado Em</th>
-            <th>Ação</th>
           </tr>
         </thead>
         <tbody>

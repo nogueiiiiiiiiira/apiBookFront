@@ -9,5 +9,5 @@ export const apiRMCharacters = axios.create({
 })
 
 export const apiBooks = axios.create({
-    baseURL: "https://www.googleapis.com/books/v1/volumes"
+    baseURL: "https://www.googleapis.com/books/v1/volumes?q=searchTerm"
 })

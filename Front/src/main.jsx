@@ -7,17 +7,17 @@ import {
 
 import './index.css'
 
-import { RickAndMortyAPI } from "./pages/RickyAndMortyAPI";
+import { ApiBooksComponent } from "./pages/apiBooks";
 import Books from "./pages/books";
 import Readers from "./pages/readers";
 import Rets from "./pages/returns";
-import Librarians from "./pages/librarians";
+import Librarians from "./pages/Librarians";
 import Loans from "./pages/loans";
 import Fines from "./pages/fines";
 
 const router = createBrowserRouter([
 
-  { path: "/", element:  <RickAndMortyAPI />},
+  { path: "/", element:  <ApiBooksComponent />},
   { path: "/Books", element:  <Books />},
   { path: "/Readers", element:  <Readers />},
   { path: "/Returns", element: <Rets /> },
