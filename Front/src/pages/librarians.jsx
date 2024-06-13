@@ -9,8 +9,8 @@ export function Librarians() {
     setContent(<LibrarianList showForm={showForm} />);
   }
 
-  function showForm(Librarian) {
-    setContent(<LibrarianForm Librarian={Librarian} showList={showList} />);
+  function showForm(librarian) {
+    setContent(<LibrarianForm librarian={librarian} showList={showList} />);
   }
 
   return (
@@ -24,10 +24,10 @@ export function Librarians() {
 }
 
 function LibrarianList(props) {
-  const [Librarians, setLibrarians] = useState([]);
+  const [librarians, setLibrarians] = useState([]);
 
   function fetchLibrarians() {
-    apiBiblioteca.get(`/Librarians`)
+    apiBiblioteca.get(`/librarians`)
     .then((response) => {
         console.log(response);
         if (!response.ok && response.status!== 200) {
@@ -50,7 +50,7 @@ function LibrarianList(props) {
   }, []);
   
   function deleteLibrarian(id) {
-    apiBiblioteca.delete(`/Librarians/${id}`)
+    apiBiblioteca.delete(`/librarians/${id}`)
      .then((response) => {
         if (!response.ok) {
           fetchLibrarians();
@@ -63,9 +63,9 @@ function LibrarianList(props) {
 
   return (
     <>
-      <h2 className="text-center mb-3">Lista de Bibliotecarios</h2>
+      <h2 className="text-center mb-3">Lista de Bibliotecários</h2>
       <button onClick={() => props.showForm({})} className="btn btn-primary me-2" type="button">
-        + Bibliotecario
+        + Bibliotecário
       </button>
       <br />
       <br />
@@ -77,33 +77,33 @@ function LibrarianList(props) {
             <th>CPF</th>
             <th>Email</th>
             <th>Telefone</th>
-            <th>DataNasc</th>
-            <th>Senha</th>
+            <th>Data de Nascimento</th>
             <th>Criado Em</th>
+            <th>Ação</th>
           </tr>
         </thead>
         <tbody>
           {
-          Librarians.map((Librarian, index) => {
+          librarians.map((librarian, index) => {
             return (
               <tr key={index}>
-                <td>{Librarian.id}</td>
-                <td>{Librarian.nome}</td>
-                <td>{Librarian.cpf}</td>
-                <td>{Librarian.email}</td>
-                <td>{Librarian.telefone}</td>
-                <td>{Librarian.dataNasc}</td>
-                <td>{Librarian.criadoEm}</td>
+                <td>{librarian.id}</td>
+                <td>{librarian.nome}</td>
+                <td>{librarian.cpf}</td>
+                <td>{librarian.email}</td>
+                <td>{librarian.telefone}</td>
+                <td>{librarian.dataNasc}</td>
+                <td>{librarian.criadoEm}</td>
                 <td style={{ width: "10px", whiteSpace: "nowrap" }}>
                   <button
-                    onClick={() => props.showForm(Librarian)}
+                    onClick={() => props.showForm(librarian)}
                     className="btn btn-primary btn-sm me-2"
                     type="button"
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => deleteLibrarian(Librarian.id)}
+                    onClick={() => deleteLibrarian(librarian.id)}
                     className="btn btn-danger btn-sm"
                     type="button"
                   >
@@ -121,103 +121,100 @@ function LibrarianList(props) {
 
 function LibrarianForm(props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [newLibrarian, setNewLibrarian] = useState(props.Librarian? props.Librarian : {
-    nome: '',
-    cpf: '',
-    email: '',
-    telefone: '',
-    dataNasc: '',
-    senha: '',
-    criadoEm: '',
-  });
+  const [newLibrarian, setNewLibrarian] = useState(
+    props.librarian
+      ? props.librarian
+      : {
+          nome: "",
+          cpf: "",
+          email: "",
+          telefone: "",
+          dataNasc: "", // Default empty string
+          senha: "",
+        }
+  );
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setNewLibrarian({...newLibrarian, [name]: value });
+    const formattedValue = name === "dataNasc" ? formatDataNasc(value) : value;
+    setNewLibrarian({ ...newLibrarian, [name]: formattedValue });
   };
+  
+  const formatDataNasc = (date) => {
+    if (date) {
+      const [year, month, day] = date.split("-");
+      return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+    } else {
+      return date;
+    }
+  };
+  
+  
 
+  const createLibrarian = (librarian) => {
+    apiBiblioteca.post(`/librarians`, librarian)
+      .then((response) => {
+        if (response.data && response.data.id) {
+          setErrorMessage(null);
+          setNewLibrarian({
+            nome: "",
+            cpf: "",
+            email: "",
+            telefone: "",
+            dataNasc: "",
+            senha: "",
+          });
+          alert("Bibliotecário criado com sucesso!");
+          props.showList();
+        } else {
+          throw new Error("Erro ao criar bibliotecário!");
+        }
+      })
+      .catch((error) => {
+        setErrorMessage("Erro ao criar bibliotecário!");
+        console.error(error);
+      });
+  };
+  
+  
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { nome, cpf, email, telefone, dataNasc, senha, criadoEm } = newLibrarian;
-    if (!nome || !cpf || !email || !telefone || !dataNasc || !senha || !criadoEm) {
-      setErrorMessage("Please, provide all the required fields!");
+    const { nome, cpf, email, telefone, dataNasc, senha } = newLibrarian;
+    if (!nome || !cpf || !email || !telefone || !dataNasc || !senha) {
+      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
       return;
     }
-    if (props.librarian.id) {
+    if (props.librarian && props.librarian.id) {
       updateLibrarian(props.librarian.id, newLibrarian);
     } else {
       createLibrarian(newLibrarian);
     }
   };
-
-  const createLibrarian = (librarian) => {
-    apiBiblioteca.get(`/Librarians`)
-     .then((response) => {
-        const existingLibrarian = response.data.find((existingLibrarian) => {
-          return (
-            existingLibrarian.nome === librarian.nome &&
-            existingLibrarian.cpf === librarian.cpf &&
-            existingLibrarian.telefone === librarian.telefone
-          );
-        });
   
-        if (existingLibrarian) {
-
-          existingLibrarian.estoque = (parseInt(existingBook.estoque) + parseInt(book.estoque)).toString();
-          updateLibrarian(existingLibrarian.id, existingLibrarian);
-          alert('Bibliotecario já existente!');
-        } else {
-
-          apiBiblioteca.post(`/Librarians`, librarian)
-           .then((response) => {
-              setErrorMessage(null);
-              setNewLibrarian({
-                nome: '',
-                cpf: '',
-                email: '',
-                telefone: '',
-                dataNasc: '',
-                senha: '',
-                criadoEm: '',
-              });
-              alert('Bibliotecario criado com sucesso!');
-            })
-           .catch((error) => {
-              setErrorMessage('Erro ao cadastrar bibliotecario!');
-              console.error(error);
-            });
-        }
-        
-      })
-     .catch((error) => console.error(error));
-     props.showList(true);
-
-      };
-
   const updateLibrarian = (id, librarian) => {
-    apiBiblioteca.put(`/Librarians/${id}`, librarian)
-     .then((response) => {
+    apiBiblioteca.put(`/librarians/${id}`, librarian)
+      .then((response) => {
         setErrorMessage(null);
-        alert('Bibliotecario atualizado com sucesso!');
+        alert('Bibliotecário atualizado com sucesso!');
       })
-     .catch((error) => {
-        setErrorMessage('Erro ao atualizar bibliotecario!');
+      .catch((error) => {
+        setErrorMessage('Erro ao atualizar bibliotecário!');
         console.error(error);
       });
-      
-      props.showList(true);
+  
+    window.location.reload();
   };
 
 
   return (
     <>
       <h2 className="text-center mb-3">
-        {props.librarian.id? "Editar Bibliotecario" : "Criar Novo Bibliotecario"}
+        {props.librarian.id? "Editar Bibliotecário" : "Criar Novo Bibliotecário"}
       </h2>
       <div className="row">
         <div className="col-lg-6 mx-auto">
           {errorMessage && (
-            <div class="alert alert-warning" role="alert">
+            <div className="alert alert-warning" role="alert">
               {errorMessage}
             </div>
           )}
@@ -280,11 +277,11 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Data Nascimento</label>
+              <label className="col-sm4 col-form-label">Data de Nascimento</label>
               <div className="col-sm-8">
                 <input
                   name="dataNasc"
-                  type="number"
+                  type="date"
                   className="form-control"
                   defaultValue={props.librarian.dataNasc}
                   placeholder="dataNasc"
@@ -294,14 +291,14 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Criado Em</label>
+              <label className="col-sm4 col-form-label">Senha</label>
               <div className="col-sm-8">
                 <input
-                  name="criadoEm"
-                  type="number"
+                  name="senha"
+                  type="password"
                   className="form-control"
-                  defaultValue={props.librarian.criadoEm}
-                  placeholder="criadoEm"
+                  defaultValue={props.librarian.senha}
+                  placeholder="Senha"
                   onChange={handleInputChange}
                 />
               </div>
@@ -319,7 +316,7 @@ function LibrarianForm(props) {
                   className="btn btn-secondary me-2"
                   type="button"
                 >
-                Cancel
+                  Cancel
                 </button>
               </div>
             </div>
