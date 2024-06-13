@@ -6,9 +6,8 @@ import style from './apiBooks.module.css';
 
 export const ApiBooksComponent = () => {
     const [data, setData] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("bestsellers");
 
-    // Função para buscar livros
     const fetchBooks = async (query) => {
         try {
             const response = await apiBooks.get(`?q=${query}`);
@@ -33,30 +32,19 @@ export const ApiBooksComponent = () => {
         }
     };
 
-    // useEffect para carregar a primeira página de resultados ao iniciar
     useEffect(() => {
-        fetchBooks("bestsellers"); // Pode substituir "bestsellers" por qualquer termo de busca padrão
-    }, []);
-
-    // useEffect para buscar livros conforme o termo de busca é atualizado
-    useEffect(() => {
-        if (searchTerm) {
-            fetchBooks(searchTerm);
-        }
+        fetchBooks(searchTerm);
     }, [searchTerm]);
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+    };
 
     return (
         <>
-            <Menu />
+            <Menu onSearch={handleSearch} />
             <div className={style.wrapBooks}>
                 <h1>Busca de Livros na Google Books API</h1>
-                <input
-                    type="text"
-                    placeholder="Digite o nome do livro"
-                    value={searchTerm}
-                    onChange={(event) => setSearchTerm(event.target.value)}
-                />
-                <br />
                 <section className={style.cardsBooks}>
                     {data.length > 0 ? (
                         data.map((book) => (

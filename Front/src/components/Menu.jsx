@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Menu() {
+function Menu({ onSearch }) { // Recebe a função de busca como prop
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (onSearch) {
+      onSearch(searchTerm);
+    }
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container-fluid">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div className="container-fluid justify-content-center">
         <Link className="navbar-brand" to="/">
           Biblioteca Nova
         </Link>
@@ -19,8 +28,8 @@ function Menu() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
+        <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link" to="/librarians">
                 Bibliotecários
@@ -52,6 +61,19 @@ function Menu() {
               </Link>
             </li>
           </ul>
+          <form className="d-flex" onSubmit={handleSearch}>
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Pesquisar livro"
+              aria-label="Pesquisar"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button className="btn btn-outline-light" type="submit">
+              Pesquisar
+            </button>
+          </form>
         </div>
       </div>
     </nav>
