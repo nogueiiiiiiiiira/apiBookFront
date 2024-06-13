@@ -162,7 +162,7 @@ function LoanForm(props) {
         apiBiblioteca.get(`/readers`)
           .then((response) => {
             const readers = response.data;
-            const cpfExistsInReaders = readers.some((reader) => reader.cpf === librarian.cpf);
+            const cpfExistsInReaders = readers.some((reader) => reader.cpf === reader.cpf);
   
             if (cpfExists || cpfExistsInReaders) {
               setErrorMessage('CPF já existe!');
@@ -251,7 +251,7 @@ function LoanForm(props) {
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.idLivro}
-                  placeholder="id Livro"
+                  placeholder="ID do Livro"
                   onChange={handleInputChange}
                 />
               </div>
@@ -265,7 +265,7 @@ function LoanForm(props) {
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.dataEmp}
-                  placeholder="Data Empréstimo"
+                  placeholder="Data do Empréstimo"
                   onChange={handleInputChange}
                 />
               </div>
@@ -279,7 +279,7 @@ function LoanForm(props) {
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.dataDev}
-                  placeholder="Data Devolução"
+                  placeholder="Data da Devolução"
                   onChange={handleInputChange}
                 />
               </div>

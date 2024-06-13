@@ -273,7 +273,7 @@ function BookForm(props) {
                   defaultValue={props.book.categoria}
                   onChange={handleInputChange}
                 >
-                  <option value="Aventura">Aventura</option>
+                  <option value="Categoria">Categoria</option>
                   <option value="Autoajuda">Autoajuda</option>
                   <option value="Biografia e Autobiografia">Biografia e Autobiografia</option>
                   <option value="Clássicos">Clássicos</option>

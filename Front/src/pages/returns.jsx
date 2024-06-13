@@ -165,7 +165,7 @@ function RetForm(props) {
         return;
       }
 
-      if(props.ret.if){
+      if(props.ret.id){
         updateRet(props.ret.id, newRet);
       } else {
         createRet(props.ret.id, newRet);
