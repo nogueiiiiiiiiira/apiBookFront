@@ -3,26 +3,22 @@ import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
 
 export function Loans() {
-  const [content, setContent] = useState(null);
-
-  useEffect(() => {
-    showList(); 
-  }, []);
+  const [content, setContent] = useState(<LoanList showForm={showForm} />);
 
   function showList() {
     setContent(<LoanList showForm={showForm} />);
   }
 
   function showForm(loan) {
-    setContent(<LoanForm librarian={loan} showList={showList} />);
+    setContent(<LoanForm loan={loan} showList={showList} />);
   }
 
   return (
     <>
-    <Menu />
-    <div className="container my-5">
-      {content}
-    </div>
+      <Menu />
+      <div className="container my-5">
+        {content}
+      </div>
     </>
   );
 }
@@ -30,17 +26,17 @@ export function Loans() {
 function LoanList(props) {
   const [loans, setLoans] = useState([]);
 
-  useEffect(() => {
-    fetchLoans();
-  }, []);
-
   function fetchLoans() {
     apiBiblioteca.get(`/loans`)
       .then((response) => {
-        if (response.status !== 200) {
+        if (!response.ok && response.status !== 200) {
           throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
         }
-        return response.data;
+        if (response.data && Array.isArray(response.data)) {
+          return response.data;
+        } else {
+          throw new Error('Invalid response from server');
+        }
       })
       .then((data) => {
         setLoans(data);
@@ -48,24 +44,28 @@ function LoanList(props) {
       .catch((error) => console.error(error));
   }
 
+  useEffect(() => {
+    fetchLoans();
+  }, []);
+
   function deleteLoan(id) {
     apiBiblioteca.delete(`/loans/${id}`)
-     .then((response) => {
-        if (response.status!== 204) { 
-          throw new Error("Não foi possível excluir o empréstimo");
+      .then((response) => {
+        if (!response.ok) {
+          fetchLoans();
+        } else {
+          throw new Error("Unexpected Server Response");
         }
-        fetchLibrarians(); 
       })
-     .catch((error) => console.error(error));
-     window.location.reload();
-
+      .catch((error) => console.error(error));
+      window.location.reload();
   }
 
   return (
     <>
       <h2 className="text-center mb-3">Lista de Empréstimos</h2>
       <button onClick={() => props.showForm({})} className="btn btn-primary me-2" type="button">
-        + Emprestar
+        + Empréstimo
       </button>
       <br />
       <br />
@@ -82,33 +82,33 @@ function LoanList(props) {
         </thead>
         <tbody>
           {
-          loans.map((loan, index) => {
-            return (
-              <tr key={index}>
-                <td>{loan.id}</td>
-                <td>{loan.cpf}</td>
-                <td>{loan.idLivro}</td>
-                <td>{loan.dataEmp}</td>
-                <td>{loan.dataDev}</td>
-                <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-                  <button
-                    onClick={() => props.showForm(loan)}
-                    className="btn btn-primary btn-sm me-2"
-                    type="button"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => deleteLoan(loan.id)}
-                    className="btn btn-danger btn-sm"
-                    type="button"
-                  >
-                    Deletar
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+            loans.map((loan, index) => {
+              return (
+                <tr key={index}>
+                  <td>{loan.id}</td>
+                  <td>{loan.cpf}</td>
+                  <td>{loan.idLivro}</td>
+                  <td>{loan.dataEmp}</td>
+                  <td>{loan.dataDev}</td>
+                  <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                    <button
+                      onClick={() => props.showForm(loan)}
+                      className="btn btn-primary btn-sm me-2"
+                      type="button"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => deleteLoan(loan.id)}
+                      className="btn btn-danger btn-sm"
+                      type="button"
+                    >
+                      Deletar
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </>
@@ -117,79 +117,68 @@ function LoanList(props) {
 
 function LoanForm(props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [newLoan, setNewLoan] = useState(props.loan? props.loan : {
+  const [newLoan, setNewLoan] = useState(props.loan ? props.loan : {
     cpf: '',
     idLivro: '',
-    dataEmp: '',
-    dataDev: '',
   });
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'dataNasc') {
-      const dateParts = value.split('-');
-      const day = dateParts[2];
-      const month = dateParts[1];
-      const year = dateParts[0];
-      const formattedDate = `${day}/${month}/${year}`;
-      setNewLoan({ ...newLoan, [name]: formattedDate });
-    } else {
-        setNewLoan({ ...newLoan, [name]: value });
-    }
+    setNewLoan({ ...newLoan, [name]: value });
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    const { cpf, idLivro, dataEmp, dataDev } = newLoan;
-    if ( !cpf || !idLivro || !dataEmp || !dataDev) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
+    event.preventDefault(); 
+    const { cpf, idLivro } = newLoan;
+    if (!cpf || !idLivro) {
+      setErrorMessage("Please, provide all the required fields!");
       return;
     }
-    if (props.loan.id) {
-      updateLibrarian(props.loan.id, newLoan);
+    if (props.loan && props.loan.id) {
+      updateLoan(props.loan.id, newLoan);
     } else {
       createLoan(newLoan);
     }
   };
 
   const createLoan = (loan) => {
-    apiBiblioteca.get(`/loans`)
+    apiBiblioteca.get(`/readers`)
       .then((response) => {
-        const loans = response.data;
-        const cpfExists = loans.some((lib) => lib.cpf === loan.cpf);
-        const idLivroExists = loans.some((lib) => lib.idLivro === loan.idLivro);
+        const readers = response.data;
+        const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === loan.cpf);
   
-        apiBiblioteca.get(`/readers`)
+        if (!cpfExistsInReaders) {
+          setErrorMessage('CPF não foi encontrado no banco de leitores!');
+          return;
+        }
+  
+        apiBiblioteca.get(`/books`)
           .then((response) => {
-            const readers = response.data;
-            const cpfExistsInReaders = readers.some((reader) => reader.cpf === reader.cpf);
+            const books = response.data;
+            const idExistsInBooks = books.some((existingBook) => existingBook.idLivro === loan.idLivro);
   
-            if (cpfExists || cpfExistsInReaders) {
-              setErrorMessage('CPF já existe!');
-            } else if (idLivroExists || emailExistsInReaders) {
-              setErrorMessage('Email já existe!');
-            } else {
-              apiBiblioteca.post(`/loans`, loan)
-                .then((response) => {
-                  setErrorMessage(null);
-                  setNewLoan({
-                    cpf: '',
-                    idLivro: '',
-                    dataEmp: '',
-                    dataDev: '',
-                  });
-                  alert('Empréstimo criado com sucesso!');
-                  window.location.reload();
-                })
-                .catch((error) => {
-                  if (error.response.status === 400) {
-                    setErrorMessage('Erro ao criar empréstimo: dados inválidos');
-                  } else {
-                    setErrorMessage('Erro ao criar empréstimo!');
-                  }
-                  console.error(error);
-                });
+            if (!idExistsInBooks) {
+              setErrorMessage('Livro não foi encontrado no banco de livros!');
+              return;
             }
+  
+            apiBiblioteca.post(`/loans`, loan)
+              .then((response) => {
+                setErrorMessage(null);
+                setNewLoan({
+                  cpf: "",
+                  idLivro: "",
+                });
+                setSuccessMessage('Empréstimo realizado com sucesso!');
+              })
+              .catch((error) => {
+                if (error.response.status === 400) {
+                  setErrorMessage('Erro ao realizar o empréstimo: dados inválidos');
+                } else {
+                  setErrorMessage('Erro ao criar empréstimo!');
+                }
+                console.error(error);
+              });
           })
           .catch((error) => {
             console.error(error);
@@ -200,25 +189,23 @@ function LoanForm(props) {
       });
   };
 
-  const updateLoan = (id, loans) => {
-    apiBiblioteca.put(`/loans/${id}`, loans)
+  const updateLoan = (id, loan) => {
+    apiBiblioteca.put(`/loans/${id}`, loan)
       .then((response) => {
         setErrorMessage(null);
-        alert('Empréstimo atualizado com sucesso!');
+        alert('Livro atualizado com sucesso!');
       })
       .catch((error) => {
-        setErrorMessage('Erro ao atualizar empréstimo!');
+        setErrorMessage('Erro ao atualizar livro!');
         console.error(error);
       });
-  
     window.location.reload();
   };
-
 
   return (
     <>
       <h2 className="text-center mb-3">
-        {props.loan.id? "Editar empréstimo" : "Criar Novo empréstimo"}
+        {props.loan.id ? "Editar Livro" : "Criar Novo Livro"}
       </h2>
       <div className="row">
         <div className="col-lg-6 mx-auto">
@@ -230,56 +217,28 @@ function LoanForm(props) {
           <form onSubmit={(event) => handleSubmit(event)}>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">CPF</label>
+              <label className="col-sm4 col-form-label">CPF do Leitor</label>
               <div className="col-sm-8">
                 <input
                   name="cpf"
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.cpf}
-                  placeholder="CPF"
+                  placeholder="CPF do Leitor"
                   onChange={handleInputChange}
                 />
               </div>
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">idLivro</label>
+              <label className="col-sm4 col-form-label">ID do Livro</label>
               <div className="col-sm-8">
                 <input
                   name="idLivro"
-                  type="text"
+                  type="number"
                   className="form-control"
                   defaultValue={props.loan.idLivro}
                   placeholder="ID do Livro"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">dataEmp</label>
-              <div className="col-sm-8">
-                <input
-                  name="dataEmp"
-                  type="text"
-                  className="form-control"
-                  defaultValue={props.loan.dataEmp}
-                  placeholder="Data do Empréstimo"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">dataDev</label>
-              <div className="col-sm-8">
-                <input
-                  name="dataDev"
-                  type="text"
-                  className="form-control"
-                  defaultValue={props.loan.dataDev}
-                  placeholder="Data da Devolução"
                   onChange={handleInputChange}
                 />
               </div>

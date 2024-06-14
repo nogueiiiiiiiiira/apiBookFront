@@ -157,7 +157,7 @@ function LibrarianForm(props) {
         const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email);
         const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone);
   
-        if(cpfExistsInLibrarians){
+        if(cpfExistsInLibrarians){s
           setErrorMessage('CPF já existe!');
         }  else if (emailExistsInLibrarians) {
           setErrorMessage('Email já existe!');
