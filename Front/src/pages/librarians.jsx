@@ -185,7 +185,7 @@ function LibrarianForm(props) {
               console.error(error);
             });
             window.location.reload();
-            alert("Bibliotecário criado com suceso!");
+            alert("Bibliotecário criado com sucesso!");
         }
       })
       .catch((error) => {

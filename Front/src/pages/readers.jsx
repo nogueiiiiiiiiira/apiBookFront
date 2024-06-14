@@ -3,11 +3,7 @@ import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
 
 export function Readers() {
-  const [content, setContent] = useState(null);
-
-  useEffect(() => {
-    showList(); 
-  }, []);
+  const [content, setContent] = useState(<ReaderList showForm={showForm} />);
 
   function showList() {
     setContent(<ReaderList showForm={showForm} />);
@@ -19,7 +15,7 @@ export function Readers() {
 
   return (
     <>
-    <Menu /> 
+    <Menu />
     <div className="container my-5">
       {content}
     </div>
@@ -30,31 +26,37 @@ export function Readers() {
 function ReaderList(props) {
   const [readers, setReaders] = useState([]);
 
+  function fetchReaders() {
+    apiBiblioteca.get(`/readers`)
+    .then((response) => {
+        console.log(response);
+        if (!response.ok && response.status!== 200) {
+          throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
+        }
+        if (response.data && Array.isArray(response.data)) {
+          return response.data;
+        } else {
+          throw new Error('Invalid response from server');
+        }
+      })
+    .then((data) => {
+        setReaders(data);
+      })
+    .catch((error) => console.error(error));
+  }
+
   useEffect(() => {
     fetchReaders();
   }, []);
-
-  function fetchReaders() {
-    apiBiblioteca.get(`/readers`)
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
-        }
-        return response.data;
-      })
-      .then((data) => {
-        setReaders(data);
-      })
-      .catch((error) => console.error(error));
-  }
-
+  
   function deleteReader(id) {
     apiBiblioteca.delete(`/readers/${id}`)
      .then((response) => {
-        if (response.status!== 204) { 
-          throw new Error("Failed to delete reader");
+        if (!response.ok) {
+          fetchReaders();
+        } else {
+          throw new Error("Unexpected Server Response");
         }
-        fetchReaders(); 
       })
      .catch((error) => console.error(error));
   }
@@ -80,38 +82,37 @@ function ReaderList(props) {
             <th>Ação</th>
           </tr>
         </thead>
-        <tbody>         
+        <tbody>
           {
-            readers.map((reader, index) => {
-              return (
-                <tr key={index}>
-                  <td>{reader.id}</td>
-                  <td>{reader.nome}</td>
-                  <td>{reader.cpf}</td>
-                  <td>{reader.email}</td>
-                  <td>{reader.telefone}</td>
-                  <td>{reader.dataNasc}</td>
-                  <td>{reader.criadoEm}</td>
-                  <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-                    <button
-                      onClick={() => props.showForm(reader)}
-                      className="btn btn-primary btn-sm me-2"
-                      type="button"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => deleteReader(reader.id)}
-                      className="btn btn-danger btn-sm"
-                      type="button"
-                    >
-                      Deletar
-                    </button>
-                  </td>
-                </tr>
-              );
-            })
-          }
+          readers.map((reader, index) => {
+            return (
+              <tr key={index}>
+                <td>{reader.id}</td>
+                <td>{reader.nome}</td>
+                <td>{reader.cpf}</td>
+                <td>{reader.email}</td>
+                <td>{reader.telefone}</td>
+                <td>{reader.dataNasc}</td>
+                <td>{reader.criadoEm}</td>
+                <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                  <button
+                    onClick={() => props.showForm(reader)}
+                    className="btn btn-primary btn-sm me-2"
+                    type="button"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => deleteReader(reader.id)}
+                    className="btn btn-danger btn-sm"
+                    type="button"
+                  >
+                    Deletar
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </>
@@ -120,97 +121,124 @@ function ReaderList(props) {
 
 function ReaderForm(props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [newReader, setNewReader] = useState(props.reader? props.reader : {
-    nome: '',
-    cpf: '',
-    email: '',
-    telefone: '',
-    dataNasc: '',
-  });
+  const [newReader, setNewReader] = useState(
+    props.reader
+      ? props.reader
+      : {
+          nome: "",
+          cpf: "",
+          email: "",
+          telefone: "",
+          dataNasc: "",
+        }
+  );
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'dataNasc') {
-      const dateParts = value.split('-');
-      const day = dateParts[2];
-      const month = dateParts[1];
-      const year = dateParts[0];
-      const formattedDate = `${day}/${month}/${year}`;
-      setNewReader({ ...newReader, [name]: formattedDate });
-    } else {
-      setNewReader({ ...newReader, [name]: value });
-    }
+    const formattedValue = name === "dataNasc" ? formatDataNasc(value) : value;
+    setNewReader({ ...newReader, [name]: formattedValue });
   };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const { nome, cpf, email, telefone, dataNasc} = newReader;
-    if (!nome || !cpf || !email || !telefone || !dataNasc) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
-      return;
-    }
-    if (props.reader.id) {
-      updateReader(props.reader.id, newReader);
+  
+  const formatDataNasc = (date) => {
+    if (date) {
+      const [year, month, day] = date.split("-");
+      return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
     } else {
-      createReader(newReader);
+      return date;
     }
   };
 
   const createReader = (reader) => {
-        apiBiblioteca.get(`/readers`)
-          .then((response) => {
-            const readers = response.data;
-            const cpfExistsInReaders = readers.some((reader) => reader.cpf === reader.cpf);
-            const emailExistsInReaders = readers.some((reader) => reader.email === reader.email);
-            const telefoneExistsInReaders = readers.some((reader) => reader.telefone === reader.telefone);
-  
-            if (cpfExistsInReaders) {
-              setErrorMessage('CPF já existe!');
-            } else if (emailExistsInReaders) {
-              setErrorMessage('Email já existe!');
-            } else if (telefoneExistsInReaders) {
-              setErrorMessage('Telefone já existe!');
-            } else {
-              apiBiblioteca.post(`/readers`, reader)
-                .then((response) => {
-                  setErrorMessage(null);
-                  setNewReader({
-                    nome: '',
-                    cpf: '',
-                    email: '',
-                    telefone: '',
-                    dataNasc: '',
-                  });
-                })
-                .catch((error) => {
-                  if (error.response.status === 400) {
-                    setErrorMessage('Erro ao criar leitor: dados inválidos');
-                  } else {
-                    setErrorMessage('Erro ao criar leitor!');
-                  }
-                  console.error(error);
-                });
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-
-          window.location.reload();
-          alert('Leitor criado com sucesso!');
-  };
-
-  const updateReader = (id, reader) => {
-    apiBiblioteca.put(`/readers/${id}`, reader)
+    apiBiblioteca.get(`/readers`)
       .then((response) => {
-        setErrorMessage(null);
-        alert('Leitor atualizado com sucesso!');
+        const readers = response.data;
+        const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf);
+        const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email);
+        const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone);
+  
+        if(cpfExistsInReaders){
+          setErrorMessage('CPF já existe!');
+        }  else if (emailExistsInReaders) {
+          setErrorMessage('Email já existe!');
+        } else if (telefoneExistsInReaders) {
+          setErrorMessage('Telefone já existe!');
+        } else {
+          apiBiblioteca.post(`/readers`, reader)
+            .then((response) => {
+              setErrorMessage(null);
+              setNewReader({
+                nome: "",
+                cpf: "",
+                email: "",
+                telefone: "",
+                dataNasc: "",
+              });
+            })
+            .catch((error) => {
+              if (error.response.status === 400) {
+                setErrorMessage('Erro ao criar leitor: dados inválidos');
+              } else {
+                setErrorMessage('Erro ao criar leitor!');
+              }
+              console.error(error);
+            });
+            window.location.reload();
+            alert("Leitor criado com sucesso!");
+        }
       })
       .catch((error) => {
-        setErrorMessage('Erro ao atualizar leitor!');
         console.error(error);
       });
   };
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const { nome, cpf, email, telefone, dataNasc } = newReader;
+      if (!nome || !cpf || !email || !telefone || !dataNasc ) {
+        setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
+        return;
+      }
+
+      if (props.reader && props.reader.id) {
+        updateReader(props.reader.id, newReader);
+      } else {
+        createReader(newReader);
+      }
+    };
+
+    const updateReader = (id, reader) => {
+      apiBiblioteca.get(`/readers`)
+        .then((response) => {
+          const readers = response.data;
+          const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf && existingReader.id !== id);
+          const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email && existingReader.id !== id);
+          const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone && existingReader.id !== id);
+    
+          if(cpfExistsInReaders){
+            setErrorMessage('CPF já existe!');
+          }  else if (emailExistsInReaders) {
+            setErrorMessage('Email já existe!');
+          } else if (telefoneExistsInReaders) {
+            setErrorMessage('Telefone já existe!');
+          } else {
+            apiBiblioteca.put(`/readers/${id}`, reader)
+              .then((response) => {
+                setErrorMessage(null);
+                alert('Leitor atualizado com sucesso!');
+              })
+              .catch((error) => {
+                setErrorMessage('Erro ao atualizar leitor!');
+                console.error(error);
+              });
+      
+            window.location.reload();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+    
 
 
   return (
@@ -228,7 +256,7 @@ function ReaderForm(props) {
           <form onSubmit={(event) => handleSubmit(event)}>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Nome</label>
+              <label className="col-sm4 col-form-label">Nome</label>
               <div className="col-sm-8">
                 <input
                   name="nome"
@@ -242,7 +270,7 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">CPF</label>
+              <label className="col-sm4 col-form-label">CPF</label>
               <div className="col-sm-8">
                 <input
                   name="cpf"
@@ -256,7 +284,7 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Email</label>
+              <label className="col-sm4 col-form-label">Email</label>
               <div className="col-sm-8">
                 <input
                   name="email"
@@ -270,7 +298,7 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Telefone</label>
+              <label className="col-sm4 col-form-label">Telefone</label>
               <div className="col-sm-8">
                 <input
                   name="telefone"
@@ -284,14 +312,14 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm-4 col-form-label">Data de Nascimento</label>
+              <label className="col-sm4 col-form-label">Data de Nascimento</label>
               <div className="col-sm-8">
                 <input
                   name="dataNasc"
                   type="date"
                   className="form-control"
                   defaultValue={props.reader.dataNasc}
-                  placeholder="Data de Nascimento"
+                  placeholder="dataNasc"
                   onChange={handleInputChange}
                 />
               </div>
@@ -320,4 +348,4 @@ function ReaderForm(props) {
   );
 }
 
-export default Readers;
+export default Readers;   
