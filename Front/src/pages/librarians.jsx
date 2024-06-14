@@ -148,64 +148,99 @@ function LibrarianForm(props) {
       return date;
     }
   };
-  
-  
 
   const createLibrarian = (librarian) => {
-    apiBiblioteca.post(`/librarians`, librarian)
+    apiBiblioteca.get(`/librarians`)
       .then((response) => {
-        if (response.data && response.data.id) {
-          setErrorMessage(null);
-          setNewLibrarian({
-            nome: "",
-            cpf: "",
-            email: "",
-            telefone: "",
-            dataNasc: "",
-            senha: "",
-          });
-          props.showList();
+        const librarians = response.data;
+        const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf);
+        const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email);
+        const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone);
+  
+        if(cpfExistsInLibrarians){
+          setErrorMessage('CPF já existe!');
+        }  else if (emailExistsInLibrarians) {
+          setErrorMessage('Email já existe!');
+        } else if (telefoneExistsInLibrarians) {
+          setErrorMessage('Telefone já existe!');
         } else {
-          throw new Error("Erro ao criar bibliotecário!");
+          apiBiblioteca.post(`/librarians`, librarian)
+            .then((response) => {
+              setErrorMessage(null);
+              setNewLibrarian({
+                nome: "",
+                cpf: "",
+                email: "",
+                telefone: "",
+                dataNasc: "",
+                senha: "",
+              });
+            })
+            .catch((error) => {
+              if (error.response.status === 400) {
+                setErrorMessage('Erro ao criar bibliotecário: dados inválidos');
+              } else {
+                setErrorMessage('Erro ao criar bibliotecário!');
+              }
+              console.error(error);
+            });
+            window.location.reload();
+            alert("Bibliotecário criado com suceso!");
         }
       })
       .catch((error) => {
-        setErrorMessage("Erro ao criar bibliotecário!");
         console.error(error);
       });
+  };
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      const { nome, cpf, email, telefone, dataNasc, senha } = newLibrarian;
+      if (!nome || !cpf || !email || !telefone || !dataNasc || !senha) {
+        setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
+        return;
+      }
 
-      window.location.reload();
-      alert("Bibliotecário criado com sucesso!");
+      if (props.librarian && props.librarian.id) {
+        updateLibrarian(props.librarian.id, newLibrarian);
+      } else {
+        createLibrarian(newLibrarian);
+      }
     };
-  
-  
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const { nome, cpf, email, telefone, dataNasc, senha } = newLibrarian;
-    if (!nome || !cpf || !email || !telefone || !dataNasc || !senha) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
-      return;
-    }
-    if (props.librarian && props.librarian.id) {
-      updateLibrarian(props.librarian.id, newLibrarian);
-    } else {
-      createLibrarian(newLibrarian);
-    }
-  };
-  
-  const updateLibrarian = (id, librarian) => {
-    apiBiblioteca.put(`/librarians/${id}`, librarian)
-      .then((response) => {
-        setErrorMessage(null);
-        alert('Bibliotecário atualizado com sucesso!');
-      })
-      .catch((error) => {
-        setErrorMessage('Erro ao atualizar bibliotecário!');
-        console.error(error);
-      });
-  
-    window.location.reload();
-  };
+
+    const updateLibrarian = (id, librarian) => {
+      apiBiblioteca.get(`/librarians`)
+        .then((response) => {
+          const librarians = response.data;
+          const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf && existingLibrarian.id !== id);
+          const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email && existingLibrarian.id !== id);
+          const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone && existingLibrarian.id !== id);
+    
+          if(cpfExistsInLibrarians){
+            setErrorMessage('CPF já existe!');
+          }  else if (emailExistsInLibrarians) {
+            setErrorMessage('Email já existe!');
+          } else if (telefoneExistsInLibrarians) {
+            setErrorMessage('Telefone já existe!');
+          } else {
+            apiBiblioteca.put(`/librarians/${id}`, librarian)
+              .then((response) => {
+                setErrorMessage(null);
+                alert('Bibliotecário atualizado com sucesso!');
+              })
+              .catch((error) => {
+                setErrorMessage('Erro ao atualizar bibliotecário!');
+                console.error(error);
+              });
+      
+            window.location.reload();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    };
+    
 
 
   return (

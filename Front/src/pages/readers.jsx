@@ -181,8 +181,6 @@ function ReaderForm(props) {
                     telefone: '',
                     dataNasc: '',
                   });
-                  alert('Leitor criado com sucesso!');
-                  props.showList(); 
                 })
                 .catch((error) => {
                   if (error.response.status === 400) {
@@ -197,6 +195,9 @@ function ReaderForm(props) {
           .catch((error) => {
             console.error(error);
           });
+
+          window.location.reload();
+          alert('Leitor criado com sucesso!');
   };
 
   const updateReader = (id, reader) => {
