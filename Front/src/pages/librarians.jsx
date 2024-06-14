@@ -129,7 +129,7 @@ function LibrarianForm(props) {
           cpf: "",
           email: "",
           telefone: "",
-          dataNasc: "", // Default empty string
+          dataNasc: "",
           senha: "",
         }
   );
@@ -164,7 +164,6 @@ function LibrarianForm(props) {
             dataNasc: "",
             senha: "",
           });
-          alert("Bibliotecário criado com sucesso!");
           props.showList();
         } else {
           throw new Error("Erro ao criar bibliotecário!");
@@ -174,7 +173,10 @@ function LibrarianForm(props) {
         setErrorMessage("Erro ao criar bibliotecário!");
         console.error(error);
       });
-  };
+
+      window.location.reload();
+      alert("Bibliotecário criado com sucesso!");
+    };
   
   
   const handleSubmit = (event) => {
