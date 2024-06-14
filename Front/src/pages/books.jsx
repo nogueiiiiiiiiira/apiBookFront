@@ -169,7 +169,8 @@ function BookForm(props) {
         if (existingBook) {
           existingBook.estoque = (parseInt(existingBook.estoque) + parseInt(book.estoque)).toString();
           updateBook(existingBook.id, existingBook);
-          alert('Livros adicionados ao estoque!');
+          
+
         } else {
           apiBiblioteca.post(`/books`, book)
             .then((response) => {
@@ -203,7 +204,6 @@ function BookForm(props) {
         setErrorMessage('Erro ao atualizar livro!');
         console.error(error);
       });
-  
     window.location.reload();
   };
 
