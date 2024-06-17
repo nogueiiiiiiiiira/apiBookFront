@@ -28,8 +28,11 @@ function LoanList(props) {
 
   function fetchLoans() {
     apiBiblioteca.get(`/loans`)
-      .then((response) => {
-        if (!response.ok && response.status !== 200) {
+    .then((response) => {
+        if (!response) {
+          throw new Error('No response from server');
+        }
+        if (!response.ok && response.status!== 200) {
           throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
         }
         if (response.data && Array.isArray(response.data)) {
@@ -155,10 +158,10 @@ function LoanForm(props) {
         apiBiblioteca.get(`/books`)
           .then((response) => {
             const books = response.data;
-            const idExistsInBooks = books.some((existingBook) => existingBook.idLivro === loan.idLivro);
+            const idExistsInBooks = books.some((existingBook) => existingBook.idLivro === books.idLivro);
   
             if (!idExistsInBooks) {
-              setErrorMessage('Livro não foi encontrado no banco de livros!');
+              setErrorMessage('Livro não foi encontrado no banco de dados!');
               return;
             }
   
@@ -169,11 +172,12 @@ function LoanForm(props) {
                   cpf: "",
                   idLivro: "",
                 });
-                setSuccessMessage('Empréstimo realizado com sucesso!');
+                alert('Empréstimo realizado com sucesso!');
+                window.location.reload();
               })
               .catch((error) => {
-                if (error.response.status === 400) {
-                  setErrorMessage('Erro ao realizar o empréstimo: dados inválidos');
+                if (error && error.response && error.response.status === 400) {
+                  setErrorMessage('Livro não foi encontrado no banco de dados!');
                 } else {
                   setErrorMessage('Erro ao criar empréstimo!');
                 }
@@ -187,6 +191,7 @@ function LoanForm(props) {
       .catch((error) => {
         console.error(error);
       });
+
   };
 
   const updateLoan = (id, loan) => {
@@ -205,7 +210,7 @@ function LoanForm(props) {
   return (
     <>
       <h2 className="text-center mb-3">
-        {props.loan.id ? "Editar Livro" : "Criar Novo Livro"}
+        {props.loan.id ? "Editar Empréstimo" : "Criar Novo Empréstimo"}
       </h2>
       <div className="row">
         <div className="col-lg-6 mx-auto">

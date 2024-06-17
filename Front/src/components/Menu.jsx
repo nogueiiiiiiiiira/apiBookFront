@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Menu({ onSearch }) { // Recebe a função de busca como prop
+function Menu({ onSearch }) { 
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event) => {

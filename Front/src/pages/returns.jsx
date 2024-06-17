@@ -3,11 +3,7 @@ import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
 
 export function Rets() {
-  const [content, setContent] = useState(null);
-
-  useEffect(() => {
-    showList(); 
-  }, []);
+  const [content, setContent] = useState(<RetList showForm={showForm} />);
 
   function showList() {
     setContent(<RetList showForm={showForm} />);
@@ -19,10 +15,10 @@ export function Rets() {
 
   return (
     <>
-    <Menu />
-    <div className="container my-5">
-      {content}
-    </div>
+      <Menu />
+      <div className="container my-5">
+        {content}
+      </div>
     </>
   );
 }
@@ -36,29 +32,25 @@ function RetList(props) {
 
   function fetchRets() {
     apiBiblioteca.get(`/returns`)
-     .then((response) => {
-        if (response.status!== 200) {
-          throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
+      .then((response) => {
+        if (!response || response.status !== 200) {
+          throw new Error('Unexpected Server Response');
         }
-        return response.data;
+        setRets(response.data);
       })
-     .then((data) => {
-        setRets(data);
-      })
-     .catch((error) => console.error(error));
+      .catch((error) => console.error(error));
   }
 
   function deleteRet(id) {
     apiBiblioteca.delete(`/returns/${id}`)
-    .then((response) => {
-        if (response.status!== 204) { 
-          throw new Error("Failed to delete return");
+      .then((response) => {
+        if (response.status === 200) {
+          fetchRets();
+        } else {
+          throw new Error("Unexpected Server Response");
         }
-        fetchRets(); 
       })
-    .catch((error) => console.error(error));
-     window.location.reload();
-
+      .catch((error) => console.error(error));
   }
 
   return (
@@ -75,42 +67,39 @@ function RetList(props) {
             <th>ID</th>
             <th>CPF do Leitor</th>
             <th>ID do Livro</th>
-            <th>Previsão de Entrega</th>
-            <th>Data de Entrega</th>
+            <th>Previsão da Devolução</th>
+            <th>Data da Devolução</th>
             <th>Multa</th>
             <th>Ação</th>
           </tr>
         </thead>
         <tbody>
-          {
-          rets.map((ret, index) => {
-            return (
-              <tr key={index}>
-                <td>{ret.id}</td>
-                <td>{ret.cpf}</td>
-                <td>{ret.idLivro}</td>
-                <td>{ret.prevDev}</td>
-                <td>{ret.dataAtual}</td>
-                <td>{ret.multaAtribuida}</td>
-                <td style={{ width: "10px", whiteSpace: "nowrap" }}>
-                  <button
-                    onClick={() => props.showForm(ret)}
-                    className="btn btn-primary btn-sm me-2"
-                    type="button"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => deleteRet(ret.id)}
-                    className="btn btn-danger btn-sm"
-                    type="button"
-                  >
-                    Deletar
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {rets.map((ret) => (
+            <tr key={ret.id}>
+              <td>{ret.id}</td>
+              <td>{ret.cpf}</td>
+              <td>{ret.idLivro}</td>
+              <td>{ret.prevDev}</td>
+              <td>{ret.dataAtual}</td>
+              <td>{ret.multaAtribuida}</td>
+              <td style={{ width: "10px", whiteSpace: "nowrap" }}>
+                <button
+                  onClick={() => props.showForm(ret)}
+                  className="btn btn-primary btn-sm me-2"
+                  type="button"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => deleteRet(ret.id)}
+                  className="btn btn-danger btn-sm"
+                  type="button"
+                >
+                  Deletar
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </>
@@ -119,161 +108,140 @@ function RetList(props) {
 
 function RetForm(props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [newRet, setNewRet] = useState(props.ret? props.ret : {
+  const [newRet, setNewRet] = useState({
     cpf: '',
     idLivro: '',
   });
 
+  useEffect(() => {
+    if (props.ret) {
+      setNewRet({ ...props.ret });
+    }
+  }, [props.ret]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'dataNasc') {
-      const dateParts = value.split('-');
-      const day = dateParts[2];
-      const month = dateParts[1];
-      const year = dateParts[0];
-      const formattedDate = `${day}/${month}/${year}`;
-      setNewRet({...newRet, [name]: formattedDate });
-    } else {
-      setNewRet({...newRet, [name]: value });
-    }
-  };
-
-  const validateRet = (newRet) => {
-    const { cpf, idLivro } = newRet;
-  
-    return apiBiblioteca.get(`/loans?cpf=${cpf}&idLivro=${idLivro}`)
-     .then((response) => {
-        if (response.status!== 200) {
-          throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
-        }
-        const loans = response.data;
-  
-        if (loans.length === 0) {
-          throw new Error('CPF ou ID do livro não encontrados');
-        }
-      })
-     .catch((error) => {
-        setErrorMessage(error.message);
-      });
+    setNewRet({ ...newRet, [name]: value });
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
     const { cpf, idLivro } = newRet;
     if (!cpf || !idLivro) {
-        setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
-        return;
-      }
+      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
+      return;
+    }
+    if (props.ret && props.ret.id) {
+      updateRet(props.ret.id, newRet);
+    } else {
+      createRet(newRet);
+    }
+  };
 
-      if(props.ret.id){
-        updateRet(props.ret.id, newRet);
-      } else {
-        createRet(props.ret.id, newRet);
-      }
-    };
+  const createRet = (ret) => {
+    apiBiblioteca.get(`/readers`)
+      .then((response) => {
+        const readers = response.data;
+        const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === ret.cpf);
   
-    const createRet = (ret) => {
-      apiBiblioteca.post(`/returns`, ret)
-        .then((response) => {
-          setErrorMessage(null);
-          setNewRet({
-            cpf: '',
-            idLivro: '',
+        if (!cpfExistsInReaders) {
+          setErrorMessage('CPF não encontrado na base de leitores!');
+          return;
+        }
+  
+        apiBiblioteca.get(`/books`)
+          .then((response) => {
+            const books = response.data;
+            const idExistsInBooks = books.some((existingBook) => existingBook.idLivro === ret.idLivro);
+  
+            if (!idExistsInBooks) {
+              setErrorMessage('ID do Livro não encontrado na base de dados!');
+              return;
+            }
+  
+            apiBiblioteca.post(`/returns`, ret)
+              .then((response) => {
+                setErrorMessage(null);
+                setNewRet({
+                  cpf: "",
+                  idLivro: "",
+                });
+                alert('Devolução criada com sucesso!');
+                props.showList();
+              })
+              .catch((error) => {
+                setErrorMessage('Erro ao criar devolução!');
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
           });
-          alert('Devolução realizada com sucesso!');
-          window.location.reload();
-        })
-        .catch((error) => {
-          if (error.response.status === 400) {
-            setErrorMessage('Erro ao criar devolução: dados inválidos');
-          } else {
-            setErrorMessage('Erro ao realizar a devolução!');
-          }
-          console.error(error);
-        });
-    };
-  
-    const updateRet = (id, ret) => {
-      apiBiblioteca.put(`/returns/${id}`, ret)
-        .then((response) => {
-          setErrorMessage(null);
-          alert('Devolução atualizada com sucesso!');
-        })
-        .catch((error) => {
-          setErrorMessage('Erro ao atualizar a devolução!');
-          console.error(error);
-        });
-  
-      window.location.reload();
-    };
-  
-    useEffect(() => {
-      validateRet(newRet);
-    }, [newRet, validateRet]);
-  
-    return (
-      <>
-        <h2 className="text-center mb-3">
-          {props.ret ? "Editar Devolução" : "Criar Nova Devolução"}
-        </h2>
-        <div className="row">
-          <div className="col-lg-6 mx-auto">
-            {errorMessage && (
-              <div className="alert alert-warning" role="alert">
-                {errorMessage}
-              </div>
-            )}
-            <form onSubmit={(event) => handleSubmit(event)}>
-  
-              <div className="row mb-3">
-                <label className="col-sm-4 col-form-label">CPF do Leitor</label>
-                <div className="col-sm-8">
-                  <input
-                    name="cpf"
-                    type="text"
-                    className="form-control"
-                    defaultValue={props.ret?.cpf}
-                    placeholder="CPF do Leitor"
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-  
-              <div className="row mb-3">
-                <label className="col-sm-4 col-form-label">ID do Livro</label>
-                <div className="col-sm-8">
-                  <input
-                    name="idLivro"
-                    type="text"
-                    className="form-control"
-                    defaultValue={props.ret?.idLivro}
-                    placeholder="ID do Livro"
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-  
-              <div className="row">
-                <div className="offset-sm-4 col-sm-4 d-grid">
-                  <button className="btn btn-primary btn-sm me-3" type="submit">
-                    Salvar
-                  </button>
-                </div>
-                <div className="col-sm-4 d-grid">
-                  <button
-                    onClick={() => props.showList()}
-                    className="btn btn-secondary me-2"
-                    type="button"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const updateRet = (id, ret) => {
+    apiBiblioteca.put(`/returns/${id}`, ret)
+      .then((response) => {
+        setErrorMessage(null);
+        alert('Devolução atualizada com sucesso!');
+        props.showList();
+      })
+      .catch((error) => {
+        setErrorMessage('Erro ao atualizar devolução!');
+        console.error(error);
+      });
+  };
+
+  return (
+    <>
+      <h2 className="text-center mb-3">
+        {props.ret && props.ret.id ? "Editar Devolução" : "Criar Nova Devolução"}
+      </h2>
+      {errorMessage && (
+        <div className="alert alert-warning" role="alert">
+          {errorMessage}
         </div>
-      </>
-    );
-  }
-  
-  export default Rets;
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">CPF do Leitor</label>
+          <input
+            name="cpf"
+            type="text"
+            className="form-control"
+            value={newRet.cpf}
+            placeholder="CPF do Leitor"
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">ID do Livro</label>
+          <input
+            name="idLivro"
+            type="number"
+            className="form-control"
+            value={newRet.idLivro}
+            placeholder="ID do Livro"
+            onChange={handleInputChange}
+          />
+        </div>
+        <button className="btn btn-primary me-3" type="submit">
+          Salvar
+        </button>
+        <button
+          className="btn btn-secondary"
+          type="button"
+          onClick={props.showList}
+        >
+          Cancelar
+        </button>
+      </form>
+    </>
+  );
+}
+
+export default Rets;
