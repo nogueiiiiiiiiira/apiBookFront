@@ -96,13 +96,6 @@ function BookList(props) {
                 <td>{book.criadoEm}</td>
                 <td style={{ width: "10px", whiteSpace: "nowrap" }}>
                   <button
-                    onClick={() => props.showForm(loans)}
-                    className="btn btn-warning btn-sm me-2"
-                    type="button"
-                  >
-                    Emprestar
-                  </button>
-                  <button
                     onClick={() => props.showForm(book)}
                     className="btn btn-primary btn-sm me-2"
                     type="button"

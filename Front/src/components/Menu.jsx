@@ -61,19 +61,6 @@ function Menu({ onSearch }) {
               </Link>
             </li>
           </ul>
-          <form className="d-flex" onSubmit={handleSearch}>
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Pesquisar livro"
-              aria-label="Pesquisar"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="btn btn-outline-light" type="submit">
-              Pesquisar
-            </button>
-          </form>
         </div>
       </div>
     </nav>

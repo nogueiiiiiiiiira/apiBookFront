@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Menu from "../components/Menu";
+import Menu2 from "../components/Menu2";
 import { apiBooks } from "../api/server";
 import Card from "../components/Card";
 import style from './apiBooks.module.css';
@@ -42,7 +42,7 @@ export const ApiBooksComponent = () => {
 
     return (
         <>
-            <Menu onSearch={handleSearch} />
+            <Menu2 onSearch={handleSearch} />
             <div className={style.wrapBooks}>
                 <h1>Busca de Livros na Google Books API</h1>
                 <section className={style.cardsBooks}>

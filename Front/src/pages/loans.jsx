@@ -198,12 +198,13 @@ function LoanForm(props) {
     apiBiblioteca.put(`/loans/${id}`, loan)
       .then((response) => {
         setErrorMessage(null);
-        alert('Livro atualizado com sucesso!');
+        alert('Empréstimo atualizado com sucesso!');
       })
       .catch((error) => {
-        setErrorMessage('Erro ao atualizar livro!');
+        setErrorMessage('Erro ao atualizar empréstimo!');
         console.error(error);
       });
+      
     window.location.reload();
   };
 
