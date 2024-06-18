@@ -36,36 +36,33 @@ function FineList(props) {
 
   function fetchFines() {
     apiBiblioteca.get(`/fines`)
-      .then((response) => {
-        if (response.status !== 200) {
+     .then((response) => {
+        if (response.status!== 200) {
           throw new Error(`Unexpected Server Response: ${response.status} ${response.statusText}`);
         }
         return response.data;
       })
-      .then((data) => {
+     .then((data) => {
         setFines(data);
       })
-      .catch((error) => console.error(error));
+     .catch((error) => console.error(error));
   }
 
   function deleteFine(id) {
     apiBiblioteca.delete(`/fines/${id}`)
-     .then((response) => {
+    .then((response) => {
         if (!response.ok) {
           fetchFines();
         } else {
           throw new Error("Unexpected Server Response");
         }
       })
-     .catch((error) => console.error(error));
+    .catch((error) => console.error(error));
   }
 
   return (
     <>
       <h2 className="text-center mb-3">Lista de Multas</h2>
-      <button onClick={() => props.showForm({})} className="btn btn-primary me-2" type="button">
-        Pagar Multa
-      </button>
       <br />
       <br />
       <table className="table">
@@ -94,7 +91,14 @@ function FineList(props) {
                   <td>{fine.statusPag}</td>
                   <td>{fine.criadoEm}</td>
                   <td>
-                    <button onClick={() => deleteFine(fine.id)} className="btn btn-danger" type="button">
+                    {fine.statusPag === 'Multa Paga'? (
+                      <span> </span>
+                    ) : (
+                      <button onClick={() => props.showForm(fine)} className="btn btn-primary btn-sm me-2" type="button">
+                        Pagar Multa
+                      </button>
+                    )}
+                    <button onClick={() => deleteFine(fine.id)} className="btn btn-danger btn-sm" type="button">
                       Excluir
                     </button>
                   </td>
@@ -106,12 +110,12 @@ function FineList(props) {
       </table>
     </>
   );
-}
+} 
 
 function FineForm(props) {
-    const [errorMessage, setErrorMessage] = useState("");
-    const [cpf, setCpf] = useState(props.fine.cpf || ''); 
-    const [idLivro, setIdLivro] = useState(props.fine.idLivro || '');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [cpf, setCpf] = useState(props.fine.cpf || ''); 
+  const [idLivro, setIdLivro] = useState(props.fine.idLivro || '');
 
   function handleInputChange(event) {
     const { name, value } = event.target;
@@ -142,8 +146,9 @@ function FineForm(props) {
   return (
     <>
     <h2 className="text-center mb-3">
-        {props.fine.id? "Editar Multa" : "Pagar Multa"}
+          Pagar Multa
       </h2>
+      <br />
     <div className="row">
       <div className="col-lg-6 mx-auto">
         {errorMessage && (

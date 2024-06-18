@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
+import InputMask from 'react-input-mask';
 
 export function Librarians() {
   const [content, setContent] = useState(<LibrarianList showForm={showForm} />);
@@ -274,14 +275,16 @@ function LibrarianForm(props) {
             <div className="row mb-3">
               <label className="col-sm4 col-form-label">CPF</label>
               <div className="col-sm-8">
-                <input
-                  name="cpf"
-                  type="text"
-                  className="form-control"
-                  defaultValue={props.librarian.cpf}
-                  placeholder="CPF"
-                  onChange={handleInputChange}
-                />
+              <InputMask
+                name="cpf"
+                type="text"
+                className="form-control"
+                defaultValue={props.librarian.cpf}
+                placeholder="Telefone"
+                onChange={handleInputChange}
+                mask="999.999.999-99"
+                maskChar="_"
+              />
               </div>
             </div>
 
@@ -302,13 +305,15 @@ function LibrarianForm(props) {
             <div className="row mb-3">
               <label className="col-sm4 col-form-label">Telefone</label>
               <div className="col-sm-8">
-                <input
+                <InputMask
                   name="telefone"
                   type="text"
                   className="form-control"
                   defaultValue={props.librarian.telefone}
                   placeholder="Telefone"
                   onChange={handleInputChange}
+                  mask="(99) 99999-9999"
+                  maskChar="_"
                 />
               </div>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
+import InputMask from 'react-input-mask';
 
 export function Rets() {
   const [content, setContent] = useState(<RetList showForm={showForm} />);
@@ -97,13 +98,6 @@ function RetList(props) {
                   <td>{ret.multaAtribuida}</td>
                   <td style={{ width: "10px", whiteSpace: "nowrap" }}>
                     <button
-                      onClick={() => props.showForm(ret)}
-                      className="btn btn-primary btn-sm me-2"
-                      type="button"
-                    >
-                      Editar
-                    </button>
-                    <button
                       onClick={() => deleteRet(ret.id)}
                       className="btn btn-danger btn-sm"
                       type="button"
@@ -181,7 +175,7 @@ function RetForm(props) {
                 if (error && error.response && error.response.status === 400) {
                   setErrorMessage('Livro não foi encontrado no banco de dados!');
                 } else {
-                  setErrorMessage('Erro ao criar empréstimo!');
+                  setErrorMessage('Livro não foi encontrado no banco de dados!');
                 }
                 console.error(error);
               });
@@ -212,7 +206,7 @@ function RetForm(props) {
   return (
     <>
       <h2 className="text-center mb-3">
-        {props.ret.id ? "Editar Devolução" : "Criar Novo Devolução"}
+        {props.ret.id ? "Editar Devolução" : "Criar Nova Devolução"}
       </h2>
       <div className="row">
         <div className="col-lg-6 mx-auto">
@@ -226,13 +220,15 @@ function RetForm(props) {
             <div className="row mb-3">
               <label className="col-sm4 col-form-label">CPF do Leitor</label>
               <div className="col-sm-8">
-                <input
+                <InputMask
                   name="cpf"
                   type="text"
                   className="form-control"
                   defaultValue={props.ret.cpf}
-                  placeholder="CPF do Leitor"
+                  placeholder="Telefone"
                   onChange={handleInputChange}
+                  mask="999.999.999-99"
+                  maskChar="_"
                 />
               </div>
             </div>

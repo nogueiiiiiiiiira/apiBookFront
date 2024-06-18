@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiBiblioteca } from "../api/server";
 import Menu from "../components/Menu";
+import InputMask from 'react-input-mask';
 
 export function Loans() {
   const [content, setContent] = useState(<LoanList showForm={showForm} />);
@@ -95,13 +96,6 @@ function LoanList(props) {
                   <td>{loan.dataDev}</td>
                   <td style={{ width: "10px", whiteSpace: "nowrap" }}>
                     <button
-                      onClick={() => props.showForm(loan)}
-                      className="btn btn-primary btn-sm me-2"
-                      type="button"
-                    >
-                      Editar
-                    </button>
-                    <button
                       onClick={() => deleteLoan(loan.id)}
                       className="btn btn-danger btn-sm"
                       type="button"
@@ -194,20 +188,6 @@ function LoanForm(props) {
 
   };
 
-  const updateLoan = (id, loan) => {
-    apiBiblioteca.put(`/loans/${id}`, loan)
-      .then((response) => {
-        setErrorMessage(null);
-        alert('Empréstimo atualizado com sucesso!');
-      })
-      .catch((error) => {
-        setErrorMessage('Erro ao atualizar empréstimo!');
-        console.error(error);
-      });
-      
-    window.location.reload();
-  };
-
   return (
     <>
       <h2 className="text-center mb-3">
@@ -225,13 +205,15 @@ function LoanForm(props) {
             <div className="row mb-3">
               <label className="col-sm4 col-form-label">CPF do Leitor</label>
               <div className="col-sm-8">
-                <input
+                <InputMask
                   name="cpf"
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.cpf}
-                  placeholder="CPF do Leitor"
+                  placeholder="Telefone"
                   onChange={handleInputChange}
+                  mask="999.999.999-99"
+                  maskChar="_"
                 />
               </div>
             </div>
