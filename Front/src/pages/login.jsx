@@ -36,7 +36,8 @@ const Login = () => {
       <div className={style.login_form_container}>
         <div className={style.left}>
           <form className={style.form_container} onSubmit={handleSubmit}>
-            <h1>Login to Your Account</h1>
+            <h1>Login</h1>
+            <br />
             <input
               type="email"
               placeholder="Email"
@@ -55,20 +56,22 @@ const Login = () => {
               required
               className={style.input}
             />
+             <div className={style.check}>
+            <br />
+              <input type="checkbox" id="remember-me"/>
+              <label htmlFor="rememberMe">Lembre-me</label>
+              <a href="#" className={style.forgotPassword}>Esqueceu a senha?</a>
+            </div>
+            <br />
+            <br />
+            <br />
             {error && <div className={style.error_msg}>{error}</div>}
             <button type="submit" className={style.green_btn}>
-              Sing In
+              Login
             </button>
           </form>
         </div>
-        <div className={style.right}>
-          <h1>New Here?</h1>
-          <Link to="/signup">
-            <button type="button" className={style.white_btn}>
-              Sing Up
-            </button>
-          </Link>
-        </div>
+        <p><a className={style.firstAcess} href="/PrimeiroAcesso">Não tem uma conta? Cadastre-se!</a></p>
       </div>
     </div>
   );

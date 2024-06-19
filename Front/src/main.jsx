@@ -15,6 +15,7 @@ import Librarians from "./pages/librarians";
 import Loans from "./pages/loans";
 import Fines from "./pages/fines";
 import Login from "./pages/login"; 
+import PrimeiroAcesso from "./pages/primeiroAcesso";
 
 const router = createBrowserRouter([
 
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
   { path: "/Loans", element: <Loans />},
   { path: "/Fines", element: <Fines />},
   { path: "/Login", element: <Login />},
+  { path: "/PrimeiroAcesso", element: <PrimeiroAcesso />},
 
 ]);
 
