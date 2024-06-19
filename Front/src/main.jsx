@@ -14,6 +14,7 @@ import Rets from "./pages/returns";
 import Librarians from "./pages/librarians";
 import Loans from "./pages/loans";
 import Fines from "./pages/fines";
+import Login from "./pages/login"; 
 
 const router = createBrowserRouter([
 
@@ -23,7 +24,8 @@ const router = createBrowserRouter([
   { path: "/Returns", element: <Rets /> },
   { path: "/Librarians", element: <Librarians />},
   { path: "/Loans", element: <Loans />},
-  { path: "/Fines", element: <Fines />}
+  { path: "/Fines", element: <Fines />},
+  { path: "/Login", element: <Login />},
 
 ]);
 
