@@ -27,6 +27,9 @@ const Login = () => {
         error.response.status <= 500
       ) {
         setError(error.response.data.message);
+        console.log(error);
+        window.alert(`Erro ao logar: login ou senha incorretos!`);
+        window.location.reload();
       }
     }
   };
@@ -56,22 +59,30 @@ const Login = () => {
               required
               className={style.input}
             />
-             <div className={style.check}>
-            <br />
-              <input type="checkbox" id="remember-me"/>
+            <div className={style.check}>
+              <br />
+              <input type="checkbox" id="remember-me" />
               <label htmlFor="rememberMe">Lembre-me</label>
-              <a href="#" className={style.forgotPassword}>Esqueceu a senha?</a>
+              <a href="#" className={style.forgotPassword}>
+                Esqueceu a senha?
+              </a>
             </div>
             <br />
             <br />
             <br />
-            {error && <div className={style.error_msg}>{error}</div>}
+            {error && (
+              <div className={style.error_msg}>{error}</div>
+            )}
             <button type="submit" className={style.green_btn}>
               Login
             </button>
           </form>
         </div>
-        <p><a className={style.firstAcess} href="/PrimeiroAcesso">Não tem uma conta? Cadastre-se!</a></p>
+        <p>
+          <a className={style.firstAcess} href="/PrimeiroAcesso">
+            Não tem uma conta? Cadastre-se!
+          </a>
+        </p>
       </div>
     </div>
   );

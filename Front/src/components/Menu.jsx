@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-function Menu({ onSearch }) { 
+
+function Menu({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -11,12 +13,28 @@ function Menu({ onSearch }) {
     }
   };
 
+  const handleLogout = () => {
+    fetch('/logout', {
+      method: 'GET',
+      credentials: 'include',
+    })
+    .then(() => {
+      navigate('/login', { replace: true });
+    });
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid justify-content-center">
-        <Link className="navbar-brand" to="/">
-          Biblioteca Nova
-        </Link>
+      <Link className="navbar-brand logo" to="/">
+        <img
+          src="./src/assets/livros.png"
+          alt=""
+          className="me-2"
+          style={{ height: '35px', width: 'auto' }}
+        />
+        Biblioteca Nova
+      </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -60,8 +78,8 @@ function Menu({ onSearch }) {
                 Multas
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">
+            <li className="nav-item sair">
+              <Link className="nav-link" to="/login" onClick={handleLogout}>
                 Sair
               </Link>
             </li>

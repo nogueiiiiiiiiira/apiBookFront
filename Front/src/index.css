@@ -3,4 +3,33 @@
     margin: 0;
     font-family: "Tilt Neon", sans-serif;
     scroll-behavior: smooth;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: block;
+  margin: 16px 0;
+  padding: 8px;
+  width: 100%;
+  height: 60%;
+}
+
+form input[type="checkbox"] {
+    margin: 4px;
+  }
+
+.sair {
+    margin-left: 60vw;
+}
+
+.logo {
+    margin-left: 1.7vw;
 }

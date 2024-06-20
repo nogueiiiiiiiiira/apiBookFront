@@ -50,7 +50,8 @@ function BookList(props) {
   }, []);
   
   function deleteBook(id) {
-    apiBiblioteca.delete(`/books/${id}`)
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este livro?");
+    if (confirmDelete) {apiBiblioteca.delete(`/books/${id}`)
      .then((response) => {
         if (!response.ok) {
           fetchBooks();
@@ -58,7 +59,8 @@ function BookList(props) {
           throw new Error("Unexpected Server Response");
         }
       })
-     .catch((error) => console.error(error));
+     .catch((error) => console.error(error)); 
+    }
   }
 
   return (
@@ -149,7 +151,9 @@ function BookForm(props) {
   };
 
   const createBook = (book) => {
-    apiBiblioteca.get(`/books`)
+    const confirmCreate = window.confirm("Tem certeza que deseja criar este livro?");
+    if (confirmCreate)
+    {apiBiblioteca.get(`/books`)
       .then((response) => {
         const existingBook = response.data.find((existingBook) => {
           return (
@@ -176,6 +180,7 @@ function BookForm(props) {
                 estoque: '',
               });
               alert('Livro criado com sucesso!');
+              window.location.reload();
             })
             .catch((error) => {
               setErrorMessage('Erro ao criar livro!');
@@ -184,21 +189,24 @@ function BookForm(props) {
         }
       })
       .catch((error) => console.error(error));
-    window.location.reload();
-  };
+  }
+};
 
   const updateBook = (id, book) => {
-    apiBiblioteca.put(`/books/${id}`, book)
+    const confirmUpdate = window.confirm("Tem certeza que deseja atualizar este livro?");
+    if (confirmUpdate) {
+      apiBiblioteca.put(`/books/${id}`, book)
       .then((response) => {
         setErrorMessage(null);
         alert('Livro atualizado com sucesso!');
+        window.location.reload();
       })
       .catch((error) => {
         setErrorMessage('Erro ao atualizar livro!');
         console.error(error);
       });
-    window.location.reload();
-  };
+  }
+};
 
 
   return (
@@ -213,10 +221,9 @@ function BookForm(props) {
               {errorMessage}
             </div>
           )}
+          <br />
           <form onSubmit={(event) => handleSubmit(event)}>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Título</label>
               <div className="col-sm-8">
                 <input
                   name="nome"
@@ -228,9 +235,7 @@ function BookForm(props) {
                 />
               </div>
             </div>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Autor</label>
               <div className="col-sm-8">
                 <input
                   name="autor"
@@ -242,9 +247,7 @@ function BookForm(props) {
                 />
               </div>
             </div>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Descrição</label>
               <div className="col-sm-8">
                 <input
                   name="descricao"
@@ -258,7 +261,6 @@ function BookForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Categoria</label>
               <div className="col-sm-8">
                 <select
                   className="form-select"
@@ -282,9 +284,8 @@ function BookForm(props) {
                 </select>
               </div>
             </div>
-
+            
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Estoque</label>
               <div className="col-sm-8">
                 <input
                   name="estoque"

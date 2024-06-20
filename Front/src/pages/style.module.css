@@ -12,8 +12,22 @@
     flex-direction: column;
 }
 
+.firstAcess_container {
+	  width: 100%;
+	  min-height: 100vh;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+    overflow-x: hidden;
+    background-image: url('../assets/biblio.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    flex-direction: column;
+}
+
 .login_form_container {
-	background-color: #fff;
+	  background-color: #fff;
     border-radius: 12px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;  padding: 32px;
     width: 400px;
@@ -22,6 +36,18 @@
     justify-content: center;
     align-items: center;
     margin-right: 60vw;
+}
+
+.firstAcess_form_container{
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;  padding: 32px;
+    width: 400px;
+    height: 700px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-left: 60vw;
 }
 
 .left {
@@ -33,6 +59,17 @@
 	background-color: white;
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
+}
+
+.firstAcessleft{
+  flex: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 
 .form_container {
@@ -93,7 +130,7 @@
 	background-color: #007BFF;
     border: none;
     border-radius: 12px;
-	color: white;
+	  color: white;
     cursor: pointer;
     margin-bottom: 50px;
 }
@@ -102,26 +139,11 @@
     background-color: #0456ae;
 }
 
-input[type="email"],
-input[type="password"] {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  display: block;
-  margin: 16px 0;
-  padding: 8px;
-  width: 100%;
-  height: 60%;
-}
-
 .forgotPassword {
     color: #007BFF;
     margin-left: 50px;
     text-decoration: none;
 }
-
-form input[type="checkbox"] {
-    margin: 4px;
-  }
   
   .check{
     display: flex; 
@@ -132,4 +154,32 @@ form input[type="checkbox"] {
   
 a{
     font-size: 14px;
+}
+
+.error_message{
+  color:red;
+} 
+
+.imagem{
+  width: 200px;
+}
+
+.center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+label{
+  font-weight: bold;
+}
+
+.desc{
+  display: flex;
+  width: 700px;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

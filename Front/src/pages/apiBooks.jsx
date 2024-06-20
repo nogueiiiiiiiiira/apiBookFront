@@ -42,25 +42,26 @@ export const ApiBooksComponent = () => {
 
     return (
         <>
-            <Menu2 onSearch={handleSearch} />
-            <div className={style.wrapBooks}>
-                <h1>Busca de Livros na Google Books API</h1>
-                <section className={style.cardsBooks}>
-                    {data.length > 0 ? (
-                        data.map((book) => (
-                            <Card
-                                key={book.id}
-                                title={book.volumeInfo.title}
-                                desc={book.volumeInfo.description || "Descrição não disponível"}
-                                value={book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : "Autor desconhecido"}
-                                imgSrc2={book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : "https://via.placeholder.com/150"}
-                            />
-                        ))
-                    ) : (
-                        <p>Nenhum livro encontrado.</p>
-                    )}
-                </section>
-            </div>
+          <Menu2 onSearch={handleSearch} />
+          <div className={style.wrapBooks}>
+            <h1>Busca de Livros na Google Books API</h1>
+            <section className={style.cardsBooks}>
+              {data.length > 0? (
+                data.map((book) => (
+                  <Card
+                    key={book.id}
+                    title={book.volumeInfo.title}
+                    desc={book.volumeInfo.description || "Descrição não disponível"}
+                    value={book.volumeInfo.authors? book.volumeInfo.authors.join(', ') : "Autor desconhecido"}
+                    imgSrc2={book.volumeInfo.imageLinks? book.volumeInfo.imageLinks.thumbnail : "https://via.placeholder.com/150"}
+                    id={book.id}
+                  />
+                ))
+              ) : (
+                <p>Nenhum livro encontrado.</p>
+              )}
+            </section>
+          </div>
         </>
-    );
+      );
 };

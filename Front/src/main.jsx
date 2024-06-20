@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
   RouterProvider,
+  Outlet,
 } from "react-router-dom";
 
 import './index.css'
@@ -16,6 +17,7 @@ import Loans from "./pages/loans";
 import Fines from "./pages/fines";
 import Login from "./pages/login"; 
 import PrimeiroAcesso from "./pages/primeiroAcesso";
+import BookDetails from "./pages/bookDetail";
 
 const router = createBrowserRouter([
 
@@ -28,6 +30,18 @@ const router = createBrowserRouter([
   { path: "/Fines", element: <Fines />},
   { path: "/Login", element: <Login />},
   { path: "/PrimeiroAcesso", element: <PrimeiroAcesso />},
+  {
+    path: "/book/:id",
+    element: (
+      <Outlet context={{ id: ":id" }} />
+    ),
+    children: [
+      {
+        path: "",
+        element: <BookDetails />, 
+      },
+    ],
+  },
 
 ]);
 

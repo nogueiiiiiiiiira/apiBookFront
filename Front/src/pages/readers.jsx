@@ -5,7 +5,7 @@ import InputMask from 'react-input-mask';
 
 export function Readers() {
   const [content, setContent] = useState(<ReaderList showForm={showForm} />);
-
+ 
   function showList() {
     setContent(<ReaderList showForm={showForm} />);
   }
@@ -51,16 +51,23 @@ function ReaderList(props) {
   }, []);
   
   function deleteReader(id) {
-    apiBiblioteca.delete(`/readers/${id}`)
-     .then((response) => {
-        if (!response.ok) {
-          fetchReaders();
-        } else {
-          throw new Error("Unexpected Server Response");
-        }
-      })
-     .catch((error) => console.error(error));
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este leitor?");
+    if (confirmDelete) {
+      apiBiblioteca.delete(`/readers/${id}`)
+       .then((response) => {
+          if (!response.ok) {
+            fetchReaders();
+            window.location.reload();
+          } else {
+            console.log("Deleting reader with ID", id);
+            setReaders(readers.filter((reader) => reader.id!== id));
+            console.log("Readers state after deletion:", readers);
+          }
+        })
+       .catch((error) => console.error(error));
+    }
   }
+  
 
   return (
     <>
@@ -150,47 +157,50 @@ function ReaderForm(props) {
   };
 
   const createReader = (reader) => {
-    apiBiblioteca.get(`/readers`)
-      .then((response) => {
-        const readers = response.data;
-        const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf);
-        const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email);
-        const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone);
-  
-        if(cpfExistsInReaders){
-          setErrorMessage('CPF já existe!');
-        }  else if (emailExistsInReaders) {
-          setErrorMessage('Email já existe!');
-        } else if (telefoneExistsInReaders) {
-          setErrorMessage('Telefone já existe!');
-        } else {
-          apiBiblioteca.post(`/readers`, reader)
-            .then((response) => {
-              setErrorMessage(null);
-              setNewReader({
-                nome: "",
-                cpf: "",
-                email: "",
-                telefone: "",
-                dataNasc: "",
+    const confirmCreate = window.confirm("Tem certeza que deseja criar este leitor?");
+    if (confirmCreate) {
+      apiBiblioteca.get(`/readers`)
+        .then((response) => {
+          const readers = response.data;
+          const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf);
+          const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email);
+          const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone);
+    
+          if(cpfExistsInReaders){
+            setErrorMessage('CPF já existe!');
+          }  else if (emailExistsInReaders) {
+            setErrorMessage('Email já existe!');
+          } else if (telefoneExistsInReaders) {
+            setErrorMessage('Telefone já existe!');
+          } else {
+            apiBiblioteca.post(`/readers`, reader)
+              .then((response) => {
+                setErrorMessage(null);
+                setNewReader({
+                  nome: "",
+                  cpf: "",
+                  email: "",
+                  telefone: "",
+                  dataNasc: "",
+                });
+                alert("Leitor criado com sucesso!");
+                window.location.reload();
+              })
+              .catch((error) => {
+                if (error.response.status === 400) {
+                  setErrorMessage('Email já existe!');
+                } else {
+                  setErrorMessage('Erro ao criar leitor!');
+                }
+                console.error(error);
               });
-            })
-            .catch((error) => {
-              if (error.response.status === 400) {
-                setErrorMessage('Erro ao criar leitor: dados inválidos');
-              } else {
-                setErrorMessage('Erro ao criar leitor!');
-              }
-              console.error(error);
-            });
-            window.location.reload();
-            alert("Leitor criado com sucesso!");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };  
   
     const handleSubmit = (event) => {
       event.preventDefault();
@@ -208,39 +218,39 @@ function ReaderForm(props) {
     };
 
     const updateReader = (id, reader) => {
-      apiBiblioteca.get(`/readers`)
-        .then((response) => {
-          const readers = response.data;
-          const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf && existingReader.id !== id);
-          const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email && existingReader.id !== id);
-          const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone && existingReader.id !== id);
-    
-          if(cpfExistsInReaders){
-            setErrorMessage('CPF já existe!');
-          }  else if (emailExistsInReaders) {
-            setErrorMessage('Email já existe!');
-          } else if (telefoneExistsInReaders) {
-            setErrorMessage('Telefone já existe!');
-          } else {
-            apiBiblioteca.put(`/readers/${id}`, reader)
-              .then((response) => {
-                setErrorMessage(null);
-                alert('Leitor atualizado com sucesso!');
-              })
-              .catch((error) => {
-                setErrorMessage('Erro ao atualizar leitor!');
-                console.error(error);
-              });
-      
-            window.location.reload();
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-    
-
+      const confirmUpdate = window.confirm("Tem certeza que deseja atualizar este leitor?");
+      if (confirmUpdate) {
+        apiBiblioteca.get(`/readers`)
+          .then((response) => {
+            const readers = response.data;
+            const cpfExistsInReaders = readers.some((existingReader) => existingReader.cpf === reader.cpf && existingReader.id !== id);
+            const emailExistsInReaders = readers.some((existingReader) => existingReader.email === reader.email && existingReader.id !== id);
+            const telefoneExistsInReaders = readers.some((existingReader) => existingReader.telefone === reader.telefone && existingReader.id !== id);
+        
+            if(cpfExistsInReaders){
+              setErrorMessage('CPF já existe!');
+            }  else if (emailExistsInReaders) {
+              setErrorMessage('Email já existe!');
+            } else if (telefoneExistsInReaders) {
+              setErrorMessage('Telefone já existe!');
+            } else {
+              apiBiblioteca.put(`/readers/${id}`, reader)
+                .then((response) => {
+                  setErrorMessage(null);
+                  alert('Leitor atualizado com sucesso!');
+                  window.location.reload();
+                })
+                .catch((error) => {
+                  setErrorMessage('Erro ao atualizar leitor!');
+                  console.error(error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    };    
 
   return (
     <>
@@ -254,10 +264,9 @@ function ReaderForm(props) {
               {errorMessage}
             </div>
           )}
+          <br />
           <form onSubmit={(event) => handleSubmit(event)}>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Nome</label>
               <div className="col-sm-8">
                 <input
                   name="nome"
@@ -271,14 +280,13 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">CPF</label>
               <div className="col-sm-8">
               <InputMask
                 name="cpf"
                 type="text"
                 className="form-control"
                 defaultValue={props.reader.cpf}
-                placeholder="Telefone"
+                placeholder="CPF"
                 onChange={handleInputChange}
                 mask="999.999.999-99"
                 maskChar="_"
@@ -287,11 +295,10 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Email</label>
               <div className="col-sm-8">
                 <input
                   name="email"
-                  type="text"
+                  type="email"
                   className="form-control"
                   defaultValue={props.reader.email}
                   placeholder="Email"
@@ -301,9 +308,8 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Telefone</label>
               <div className="col-sm-8">
-              <InputMask
+                <InputMask
                   name="telefone"
                   type="text"
                   className="form-control"
@@ -317,16 +323,24 @@ function ReaderForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Data de Nascimento</label>
               <div className="col-sm-8">
-                <input
-                  name="dataNasc"
-                  type="date"
-                  className="form-control"
-                  defaultValue={props.reader.dataNasc}
-                  placeholder="dataNasc"
-                  onChange={handleInputChange}
-                />
+              <input
+                name="dataNasc"
+                type="text"
+                className="form-control"
+                placeholder="Data de Nascimento"
+                onFocus={(e) => {
+                  e.target.type = 'date';
+                  e.target.placeholder = '';
+                }}
+                onBlur={(e) => {
+                  if (!e.target.value) {
+                    e.target.type = 'text';
+                    e.target.placeholder = 'Data de Nascimento';
+                  }
+                }}
+                onChange={handleInputChange}
+              />
               </div>
             </div>
 

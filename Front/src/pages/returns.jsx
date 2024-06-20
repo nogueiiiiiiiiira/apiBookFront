@@ -53,6 +53,8 @@ function RetList(props) {
   }, []);
 
   function deleteRet(id) {
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar esta devolução?");
+    if (confirmDelete) {
     apiBiblioteca.delete(`/returns/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -64,6 +66,7 @@ function RetList(props) {
       .catch((error) => console.error(error));
       window.location.reload();
   }
+}
 
   return (
     <>
@@ -141,6 +144,8 @@ function RetForm(props) {
   };
 
   const createRet = (ret) => {
+    const confirmCreate = window.confirm("Tem certeza que deseja realizar esta devolução?");
+    if (confirmCreate) {
     apiBiblioteca.get(`/readers`)
       .then((response) => {
         const readers = response.data;
@@ -187,7 +192,7 @@ function RetForm(props) {
       .catch((error) => {
         console.error(error);
       });
-
+    }
   };
 
   const updateRet = (id, ret) => {
@@ -215,17 +220,16 @@ function RetForm(props) {
               {errorMessage}
             </div>
           )}
+          <br />
           <form onSubmit={(event) => handleSubmit(event)}>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">CPF do Leitor</label>
               <div className="col-sm-8">
                 <InputMask
                   name="cpf"
                   type="text"
                   className="form-control"
                   defaultValue={props.ret.cpf}
-                  placeholder="Telefone"
+                  placeholder="CPF"
                   onChange={handleInputChange}
                   mask="999.999.999-99"
                   maskChar="_"
@@ -234,7 +238,6 @@ function RetForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">ID do Livro</label>
               <div className="col-sm-8">
                 <input
                   name="idLivro"

@@ -53,7 +53,10 @@ function LoanList(props) {
   }, []);
 
   function deleteLoan(id) {
-    apiBiblioteca.delete(`/loans/${id}`)
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este empréstimo?");
+    if (confirmDelete) 
+    {
+      apiBiblioteca.delete(`/loans/${id}`)
       .then((response) => {
         if (!response.ok) {
           fetchLoans();
@@ -62,7 +65,7 @@ function LoanList(props) {
         }
       })
       .catch((error) => console.error(error));
-      window.location.reload();
+    }
   }
 
   return (
@@ -139,6 +142,8 @@ function LoanForm(props) {
   };
 
   const createLoan = (loan) => {
+    const confirmCreate = window.confirm("Tem certeza que deseja realizar este empréstimo?");
+    if (confirmCreate) {
     apiBiblioteca.get(`/readers`)
       .then((response) => {
         const readers = response.data;
@@ -185,7 +190,7 @@ function LoanForm(props) {
       .catch((error) => {
         console.error(error);
       });
-
+    }
   };
 
   return (
@@ -200,17 +205,16 @@ function LoanForm(props) {
               {errorMessage}
             </div>
           )}
+          <br />
           <form onSubmit={(event) => handleSubmit(event)}>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">CPF do Leitor</label>
               <div className="col-sm-8">
                 <InputMask
                   name="cpf"
                   type="text"
                   className="form-control"
                   defaultValue={props.loan.cpf}
-                  placeholder="Telefone"
+                  placeholder="CPF"
                   onChange={handleInputChange}
                   mask="999.999.999-99"
                   maskChar="_"
@@ -219,7 +223,6 @@ function LoanForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">ID do Livro</label>
               <div className="col-sm-8">
                 <input
                   name="idLivro"
