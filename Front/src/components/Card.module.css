@@ -1,59 +1,74 @@
 *{
-  margin: 0;
-  padding: 0;
+margin: 0;
+padding: 0;
 }
 
 .wrapCard {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
 
-  .Card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 290px;
-    text-align: center;
-    padding: 15px;
-    transition: transform 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .Card:hover {
-    transform: scale(1.05);
-  }
-  
-  .cardTitle {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .img2 {
-    border-radius: 8px;
-    margin-bottom: 10px;
-    width: 100%;
-    height: auto;
-  }
-  
-  .cardBody {
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .cardText {
-    margin-bottom: 10px;
-  }
-  
-  .readMore {
-    color: blue;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 14px;
-  }
-  
+.Card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 290px;
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Card:hover {
+  transform: scale(1.05);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.img2 {
+  border-radius: 8px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: auto;
+}
+
+.cardBody {
+  font-size: 14px;
+  color: #555;
+}
+
+.cardText {
+  margin-bottom: 10px;
+}
+
+.readMore {
+  display: inline-block;
+  padding: 5px 10px;
+  color: #007bff;
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: underline;
+  font-size: 14px;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.readMore:hover {
+  color: #0056b3;
+}
+
+.readMore:focus {
+  outline: none;
+  box-shadow: 0 0 3px 2px rgba(0, 123, 255, 0.5);
+}
