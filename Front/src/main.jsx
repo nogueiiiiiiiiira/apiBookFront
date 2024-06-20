@@ -5,8 +5,8 @@ import {
   RouterProvider,
   Outlet,
 } from "react-router-dom";
-
-import './index.css'
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importa o CSS do Bootstrap
+import './index.css';
 
 import { ApiBooksComponent } from "./pages/apiBooks";
 import Books from "./pages/books";
@@ -20,10 +20,9 @@ import PrimeiroAcesso from "./pages/primeiroAcesso";
 import BookDetails from "./pages/bookDetail";
 
 const router = createBrowserRouter([
-
-  { path: "/", element:  <ApiBooksComponent />},
-  { path: "/Books", element:  <Books />},
-  { path: "/Readers", element:  <Readers />},
+  { path: "/", element: <ApiBooksComponent /> },
+  { path: "/Books", element: <Books /> },
+  { path: "/Readers", element: <Readers /> },
   { path: "/Returns", element: <Rets /> },
   { path: "/Librarians", element: <Librarians />},
   { path: "/Loans", element: <Loans />},
@@ -49,4 +48,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>,
-)
+);

@@ -20,8 +20,8 @@ const Card = ({ title, imgSrc2, desc, value, id }) => {
         <h3 className={style.cardTitle}>{title || 'Título Desconhecido'}</h3>
         <img
           className={style.img2}
-          src={imgSrc2 || 'https://via.placeholder.com/150'}
-          alt={title || 'Imagem de livro'}
+          src={imgSrc2}
+          alt={title}
           width={150}
           height="auto"
         />
@@ -32,6 +32,18 @@ const Card = ({ title, imgSrc2, desc, value, id }) => {
           <Link to={`/book/${id}`}>Ler mais</Link>
         </div>
       </div>
+
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{desc}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Fechar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

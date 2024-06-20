@@ -1,14 +1,14 @@
 *{
-  margin: 0;
-  padding: 0;
+margin: 0;
+padding: 0;
 }
 
 .wrapCard {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
 
   .Card {
     background-color: #fff;
