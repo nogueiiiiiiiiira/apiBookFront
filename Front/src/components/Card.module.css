@@ -1,20 +1,21 @@
-/* Card.module.css */
+*{
+  margin: 0;
+  padding: 0;
+}
 
-/* Contêiner que envolve cada cartão */
 .wrapCard {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px;
   }
-  
-  /* Estilo do cartão */
+
   .Card {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 180px; /* Ajuste conforme necessário */
+    width: 290px;
     text-align: center;
     padding: 15px;
     transition: transform 0.3s;
@@ -27,14 +28,12 @@
     transform: scale(1.05);
   }
   
-  /* Estilo do título do cartão */
   .cardTitle {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 10px;
   }
   
-  /* Estilo da imagem dentro do cartão */
   .img2 {
     border-radius: 8px;
     margin-bottom: 10px;
@@ -42,18 +41,15 @@
     height: auto;
   }
   
-  /* Estilo do corpo do cartão */
   .cardBody {
     font-size: 14px;
     color: #555;
   }
   
-  /* Estilo do texto dentro do corpo do cartão */
   .cardText {
     margin-bottom: 10px;
   }
   
-  /* Estilo do link "Saiba mais" */
   .readMore {
     color: blue;
     cursor: pointer;

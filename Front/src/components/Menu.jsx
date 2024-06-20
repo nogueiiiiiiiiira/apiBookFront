@@ -60,6 +60,11 @@ function Menu({ onSearch }) {
                 Multas
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/login">
+                Sair
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

@@ -60,12 +60,17 @@ function Menu2({ onSearch }) {
                 Multas
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/login">
+                Sair
+              </Link>
+            </li>
           </ul>
           <form className="d-flex" onSubmit={handleSearch}>
             <input
               className="form-control me-2"
               type="search"
-              placeholder="Pesquisar livro"
+              placeholder="Digite algo"
               aria-label="Pesquisar"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
