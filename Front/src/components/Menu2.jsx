@@ -14,9 +14,16 @@ function Menu2({ onSearch }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid justify-content-center">
-        <Link className="navbar-brand" to="/">
-          Biblioteca Nova
-        </Link>
+      <Link className="navbar-brand" to="/">
+        <img
+          src="./src/assets/livros.png"
+          alt=""
+          className="me-2"
+          style={{ height: '35px', width: 'auto' }}
+        />
+        Biblioteca Nova
+      </Link>
+
         <button
           className="navbar-toggler"
           type="button"
