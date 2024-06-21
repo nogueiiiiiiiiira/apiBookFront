@@ -35,7 +35,7 @@ const Card = ({ title, imgSrc2, desc, value }) => {
 
   return (
     <div className={style.wrapCard}>
-      <div className={style.Card}>
+      <div className={style.Card} onClick={() => setShowModal(true)}>
         <h2 className={style.cardTitle}>{title}</h2>
         <img
           className={style.img2}
@@ -49,12 +49,21 @@ const Card = ({ title, imgSrc2, desc, value }) => {
           <p>{value}</p>
         </div>
       </div>
-
+  
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{desc}</Modal.Body>
+        <Modal.Body>
+          <div>
+            <img
+              src={imgSrc2}
+              alt={title}
+              className="img-fluid mb-3"
+            />
+            <p>{desc}</p>
+          </div>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Fechar

@@ -26,7 +26,10 @@ const Login = () => {
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
-        setError(error.response.data.message);
+        setErrorMessage(null);
+        console.log(error);
+        alert(`Erro ao logar: login ou senha incorretos!`);
+        window.location.reload();
       }
     }
   };
