@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { apiBiblioteca } from "../api/server";
-import Menu from "../components/Menu";
 import InputMask from 'react-input-mask';
+import { useNavigate } from "react-router-dom";
+import styles from './primeiroAcesso.module.css';
 
 export function PrimeiroAcesso() {
-  const [content, setContent] = useState(<CadastroForm />);
+  const [content] = useState(<CadastroForm />);
 
   return (
-    <>
-      <Menu />
-      <div className="container my-5">
+      <div>
         {content}
       </div>
-    </>
   );
 }
 
 function CadastroForm() {
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [newLibrarian, setNewLibrarian] = useState({
     nome: "",
@@ -43,27 +42,61 @@ function CadastroForm() {
   };
 
   const createLibrarian = (librarian) => {
-    apiBiblioteca.post(`/librarians`, librarian)
-     .then((response) => {
-        setErrorMessage(null);
-        alert("Bibliotecário criado com sucesso!");
-        window.location.reload();
-      })
-     .catch((error) => {
-        if (error.response.status === 400) {
-          setErrorMessage('Erro ao criar bibliotecário: dados inválidos');
-        } else {
-          setErrorMessage('Erro ao criar bibliotecário!');
-        }
-        console.error(error);
-      });
+    const confirmCreate = window.confirm("Tem certeza que deseja criar este bibliotecário?");
+    if (confirmCreate) {
+      apiBiblioteca.get(`/librarians`)
+        .then((response) => {
+          const librarians = response.data;
+          const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf);
+          const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email);
+          const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone);
+    
+          if(cpfExistsInLibrarians){
+            setErrorMessage(null);
+            alert('CPF já existe!');
+          }  else if (emailExistsInLibrarians) {
+            setErrorMessage(null);
+            alert('Email já existe!');
+          } else if (telefoneExistsInLibrarians) {
+            setErrorMessage(null)
+            alert('Telefone já existe!');
+          } else {
+            apiBiblioteca.post(`/librarians`, librarian)
+              .then((response) => {
+                setErrorMessage(null);
+                setNewLibrarian({
+                  nome: "",
+                  cpf: "",
+                  email: "",
+                  telefone: "",
+                  dataNasc: "",
+                  senha: "",
+                });
+                alert("Bibliotecário criado com sucesso!");
+                navigate("/Login");
+              })
+              .catch((error) => {
+                if (error.response.status === 400) {
+                  setErrorMessage('Erro ao criar bibliotecário: dados inválidos');
+                } else {
+                  setErrorMessage('Erro ao criar bibliotecário!');
+                }
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const { nome, cpf, email, telefone, dataNasc, senha } = newLibrarian;
-    if (!nome ||!cpf ||!email ||!telefone ||!dataNasc ||!senha) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios!");
+    if (!nome || !cpf || !email || !telefone || !dataNasc || !senha) {
+      setErrorMessage(null);
+      alert("Por favor, preencha todos os campos obrigatórios!");
       return;
     }
 
@@ -71,111 +104,82 @@ function CadastroForm() {
   };
 
   return (
-    <>
-      <h2 className="text-center mb-3">Cadastre-se</h2>
-      <div className="row">
-        <div className="col-lg-6 mx-auto">
-          {errorMessage && (
-            <div className="alert alert-warning" role="alert">
-              {errorMessage}
-            </div>
-          )}
+    <div className={`container-fluid d-flex align-items-center vh-100 ${styles.login_container}`}>
+       <div className={`card p-5 shadow`}>
           <form onSubmit={(event) => handleSubmit(event)}>
+            <h1>Cadastre-se</h1>
+            <br />
+              {errorMessage && (
+                <div role="alert">
+                  {errorMessage}
+                </div>
+              )}
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Nome</label>
-              <div className="col-sm-8">
-                <input
-                  name="nome"
-                  type="text"
-                  className="form-control"
-                  placeholder="Nome"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
+          <input
+            name="nome"
+            type="text"
+            placeholder="Nome"
+            onChange={handleInputChange}
+            className="form-control mb-3"
+            />
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">CPF</label>
-              <div className="col-sm-8">
-              <InputMask
-                name="cpf"
-                type="text"
-                className="form-control"
-                placeholder="CPF"
-                onChange={handleInputChange}
-                mask="999.999.999-99"
-                maskChar="_"
-              />
-              </div>
-            </div>
+          <InputMask
+            name="cpf"
+            type="text"
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Email</label>
-              <div className="col-sm-8">
-                <input
-                  name="email"
-                  type="email"
-                  className="form-control"
-                  placeholder="Email"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
+            placeholder="CPF"
+            onChange={handleInputChange}
+            mask="999.999.999-99"
+            maskChar="_"
+            className="form-control mb-3"
+          />
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Telefone</label>
-              <div className="col-sm-8">
-                <InputMask
-                  name="telefone"
-                  type="text"
-                  className="form-control"
-                  placeholder="Telefone"
-                  onChange={handleInputChange}
-                  mask="(99) 99999-9999"
-                  maskChar="_"
-                />
-              </div>
-            </div>
+          <input
+            name="email"
+            type="text"
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Data de Nascimento</label>
-              <div className="col-sm-8">
-                <input
-                  name="dataNasc"
-                  type="date"
-                  className="form-control"
-                  placeholder="Data de Nascimento"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
+            placeholder="Email"
+            onChange={handleInputChange}
+            className="form-control mb-3"
+          />
 
-            <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Senha</label>
-              <div className="col-sm-8">
-                <input
-                  name="senha"
-                  type="password"
-                  className="form-control"
-                  placeholder="Senha"
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
+          <InputMask
+            name="telefone"
+            type="text"
 
-            <div className="row">
-              <div className="offset-sm-4 col-sm-4 d-grid">
-                <button className="btn btn-primary btn-sm me-3" type="submit">
-                  Salvar
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+            placeholder="Telefone"
+            onChange={handleInputChange}
+            mask="(99) 99999-9999"
+            maskChar="_"
+            className="form-control mb-3"
+          />
+
+          <input
+            name="dataNasc"
+            type="date"
+    
+            placeholder="Data de Nascimento"
+            onChange={handleInputChange}
+            className="form-control mb-3"
+          />
+
+          <input
+            name="senha"
+            type="password"
+
+            placeholder="Senha"
+            onChange={handleInputChange}
+            className="form-control mb-3"
+          />
+
+          <button type="submit" className="btn btn-primary w-100">
+            Salvar
+          </button>
+        </form>
+        <p className="text-center mt-3">Voltar para <a className="text-primary" href="/Login">Login</a></p>
       </div>
-    </>
-  );
+    </div>
+  );  
 }
 
 export default PrimeiroAcesso;

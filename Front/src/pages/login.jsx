@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import style from "./style.module.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import styles from './login.module.css';
 
 const Login = () => {
   const [data, setData] = useState({ email: "", senha: "" });
@@ -32,46 +32,41 @@ const Login = () => {
   };
 
   return (
-    <div className={style.login_container}>
-      <div className={style.login_form_container}>
-        <div className={style.left}>
-          <form className={style.form_container} onSubmit={handleSubmit}>
-            <h1>Login</h1>
-            <br />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              onChange={handleChange}
-              value={data.email}
-              required
-              className={style.input}
-            />
-            <input
-              type="password"
-              placeholder="Senha"
-              name="senha"
-              onChange={handleChange}
-              value={data.senha}
-              required
-              className={style.input}
-            />
-             <div className={style.check}>
-            <br />
-              <input type="checkbox" id="remember-me"/>
-              <label htmlFor="rememberMe">Lembre-me</label>
-              <a href="#" className={style.forgotPassword}>Esqueceu a senha?</a>
+    <div className={`container-fluid d-flex align-items-center vh-100 ${styles.login_container}`}>
+      <div className={`card p-5 shadow`}>
+        <form className={styles.form_container} onSubmit={handleSubmit}>
+          <h1 className="text-center">Login</h1>
+          <br />
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={handleChange}
+            value={data.email}
+            required
+            className="form-control mb-3"
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            name="senha"
+            onChange={handleChange}
+            value={data.senha}
+            required
+            className="form-control mb-3"
+          />
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="form-check">
+              <input type="checkbox" id="remember-me" className="form-check-input"/>
+              <label htmlFor="remember-me" className="form-check-label">Lembre-me</label>
             </div>
-            <br />
-            <br />
-            <br />
-            {error && <div className={style.error_msg}>{error}</div>}
-            <button type="submit" className={style.green_btn}>
-              Login
-            </button>
-          </form>
-        </div>
-        <p><a className={style.firstAcess} href="/PrimeiroAcesso">Não tem uma conta? Cadastre-se!</a></p>
+          </div>
+          <br />
+          {error && <div className="alert alert-danger">{error}</div>}
+          <button type="submit" className="btn btn-primary w-100">Login</button>
+        </form>
+        <p className="text-center mt-3">Não tem conta? <a className="text-primary" href="/PrimeiroAcesso">Clique aqui</a></p>
+        <p className="text-center mt-3"><a className="text-primary" href="#">Esqueceu a senha?</a></p>
       </div>
     </div>
   );

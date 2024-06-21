@@ -1,0 +1,12 @@
+/* Login.module.css */
+.login_container {
+  background-image: url('../assets/biblio.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding-left: 10vw;
+}
+
+.forgotPassword {
+  text-decoration: none;
+}
