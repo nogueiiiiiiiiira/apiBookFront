@@ -26,9 +26,15 @@ const Login = () => {
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
+<<<<<<< HEAD
         setError(error.response.data.message);
         console.log(error);
         window.alert(`Erro ao logar: login ou senha incorretos!`);
+=======
+        setErrorMessage(null);
+        console.log(error);
+        alert(`Erro ao logar: login ou senha incorretos!`);
+>>>>>>> Cleber-Leivas
         window.location.reload();
       }
     }

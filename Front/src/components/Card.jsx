@@ -16,8 +16,13 @@ const Card = ({ title, imgSrc2, desc, value, id }) => {
 
   return (
     <div className={style.wrapCard}>
+<<<<<<< HEAD
       <div className={style.Card}>
         <h3 className={style.cardTitle}>{title || 'Título Desconhecido'}</h3>
+=======
+      <div className={style.Card} onClick={() => setShowModal(true)}>
+        <h2 className={style.cardTitle}>{title}</h2>
+>>>>>>> Cleber-Leivas
         <img
           className={style.img2}
           src={imgSrc2}
@@ -32,12 +37,21 @@ const Card = ({ title, imgSrc2, desc, value, id }) => {
           <Link to={`/book/${id}`}>Ler mais</Link>
         </div>
       </div>
-
+  
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{desc}</Modal.Body>
+        <Modal.Body>
+          <div>
+            <img
+              src={imgSrc2}
+              alt={title}
+              className="img-fluid mb-3"
+            />
+            <p>{desc}</p>
+          </div>
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
             Fechar
