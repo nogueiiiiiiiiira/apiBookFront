@@ -99,7 +99,6 @@ function CadastroForm() {
       alert("Por favor, preencha todos os campos obrigatórios!");
       return;
     }
-
     createLibrarian(newLibrarian);
   };
 

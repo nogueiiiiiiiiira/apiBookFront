@@ -51,16 +51,20 @@ function LibrarianList(props) {
   }, []);
   
   function deleteLibrarian(id) {
-    apiBiblioteca.delete(`/librarians/${id}`)
-     .then((response) => {
-        if (!response.ok) {
-          fetchLibrarians();
-        } else {
-          throw new Error("Unexpected Server Response");
-        }
-      })
-     .catch((error) => console.error(error));
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este bibliotecário?");
+    if (confirmDelete) {
+      apiBiblioteca.delete(`/librarians/${id}`)
+        .then((response) => {
+          if (!response.ok) {
+            fetchLibrarians();
+          } else {
+            throw new Error("Unexpected Server Response");
+          }
+        })
+        .catch((error) => console.error(error));
+    }
   }
+  
 
   return (
     <>
@@ -151,48 +155,51 @@ function LibrarianForm(props) {
   };
 
   const createLibrarian = (librarian) => {
-    apiBiblioteca.get(`/librarians`)
-      .then((response) => {
-        const librarians = response.data;
-        const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf);
-        const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email);
-        const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone);
-  
-        if(cpfExistsInLibrarians){
-          setErrorMessage('CPF já existe!');
-        }  else if (emailExistsInLibrarians) {
-          setErrorMessage('Email já existe!');
-        } else if (telefoneExistsInLibrarians) {
-          setErrorMessage('Telefone já existe!');
-        } else {
-          apiBiblioteca.post(`/librarians`, librarian)
-            .then((response) => {
-              setErrorMessage(null);
-              setNewLibrarian({
-                nome: "",
-                cpf: "",
-                email: "",
-                telefone: "",
-                dataNasc: "",
-                senha: "",
+    const confirmCreate = window.confirm("Tem certeza que deseja criar este bibliotecário?");
+    if (confirmCreate) {
+      apiBiblioteca.get(`/librarians`)
+        .then((response) => {
+          const librarians = response.data;
+          const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf);
+          const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email);
+          const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone);
+    
+          if(cpfExistsInLibrarians){
+            setErrorMessage('CPF já existe!');
+          }  else if (emailExistsInLibrarians) {
+            setErrorMessage('Email já existe!');
+          } else if (telefoneExistsInLibrarians) {
+            setErrorMessage('Telefone já existe!');
+          } else {
+            apiBiblioteca.post(`/librarians`, librarian)
+              .then((response) => {
+                setErrorMessage(null);
+                setNewLibrarian({
+                  nome: "",
+                  cpf: "",
+                  email: "",
+                  telefone: "",
+                  dataNasc: "",
+                  senha: "",
+                });
+                alert("Bibliotecário criado com sucesso!");
+                window.location.reload();
+              })
+              .catch((error) => {
+                if (error.response.status === 400) {
+                  setErrorMessage('Erro ao criar bibliotecário: dados inválidos');
+                } else {
+                  setErrorMessage('Erro ao criar bibliotecário!');
+                }
+                console.error(error);
               });
-            })
-            .catch((error) => {
-              if (error.response.status === 400) {
-                setErrorMessage('Erro ao criar bibliotecário: dados inválidos');
-              } else {
-                setErrorMessage('Erro ao criar bibliotecário!');
-              }
-              console.error(error);
-            });
-            window.location.reload();
-            alert("Bibliotecário criado com sucesso!");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };  
   
     const handleSubmit = (event) => {
       event.preventDefault();
@@ -210,45 +217,46 @@ function LibrarianForm(props) {
     };
 
     const updateLibrarian = (id, librarian) => {
-      apiBiblioteca.get(`/librarians`)
-        .then((response) => {
-          const librarians = response.data;
-          const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf && existingLibrarian.id !== id);
-          const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email && existingLibrarian.id !== id);
-          const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone && existingLibrarian.id !== id);
-    
-          if(cpfExistsInLibrarians){
-            setErrorMessage('CPF já existe!');
-          }  else if (emailExistsInLibrarians) {
-            setErrorMessage('Email já existe!');
-          } else if (telefoneExistsInLibrarians) {
-            setErrorMessage('Telefone já existe!');
-          } else {
-            apiBiblioteca.put(`/librarians/${id}`, librarian)
-              .then((response) => {
-                setErrorMessage(null);
-                alert('Bibliotecário atualizado com sucesso!');
-              })
-              .catch((error) => {
-                setErrorMessage('Erro ao atualizar bibliotecário!');
-                console.error(error);
-              });
-      
-            window.location.reload();
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    };
-    
-
+      const confirmUpdate = window.confirm("Tem certeza que deseja atualizar este bibliotecário?");
+      if (confirmUpdate) {
+        apiBiblioteca.get(`/librarians`)
+          .then((response) => {
+            const librarians = response.data;
+            const cpfExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.cpf === librarian.cpf && existingLibrarian.id !== id);
+            const emailExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.email === librarian.email && existingLibrarian.id !== id);
+            const telefoneExistsInLibrarians = librarians.some((existingLibrarian) => existingLibrarian.telefone === librarian.telefone && existingLibrarian.id !== id);
+        
+            if(cpfExistsInLibrarians){
+              setErrorMessage('CPF já existe!');
+            }  else if (emailExistsInLibrarians) {
+              setErrorMessage('Email já existe!');
+            } else if (telefoneExistsInLibrarians) {
+              setErrorMessage('Telefone já existe!');
+            } else {
+              apiBiblioteca.put(`/librarians/${id}`, librarian)
+                .then((response) => {
+                  setErrorMessage(null);
+                  alert('Bibliotecário atualizado com sucesso!');
+                  window.location.reload();
+                })
+                .catch((error) => {
+                  setErrorMessage('Erro ao atualizar bibliotecário!');
+                  console.error(error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+    };    
 
   return (
     <>
       <h2 className="text-center mb-3">
         {props.librarian.id? "Editar Bibliotecário" : "Criar Novo Bibliotecário"}
       </h2>
+      <br />
       <div className="row">
         <div className="col-lg-6 mx-auto">
           {errorMessage && (
@@ -256,10 +264,9 @@ function LibrarianForm(props) {
               {errorMessage}
             </div>
           )}
+          <br />
           <form onSubmit={(event) => handleSubmit(event)}>
-
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Nome</label>
               <div className="col-sm-8">
                 <input
                   name="nome"
@@ -273,14 +280,13 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">CPF</label>
               <div className="col-sm-8">
               <InputMask
                 name="cpf"
                 type="text"
                 className="form-control"
                 defaultValue={props.librarian.cpf}
-                placeholder="Telefone"
+                placeholder="CPF"
                 onChange={handleInputChange}
                 mask="999.999.999-99"
                 maskChar="_"
@@ -289,11 +295,10 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Email</label>
               <div className="col-sm-8">
                 <input
                   name="email"
-                  type="text"
+                  type="email"
                   className="form-control"
                   defaultValue={props.librarian.email}
                   placeholder="Email"
@@ -303,7 +308,6 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Telefone</label>
               <div className="col-sm-8">
                 <InputMask
                   name="telefone"
@@ -319,21 +323,28 @@ function LibrarianForm(props) {
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Data de Nascimento</label>
               <div className="col-sm-8">
-                <input
+                  <input
                   name="dataNasc"
-                  type="date"
+                  type="text"
                   className="form-control"
-                  defaultValue={props.librarian.dataNasc}
-                  placeholder="dataNasc"
+                  placeholder="Data de Nascimento"
+                  onFocus={(e) => {
+                    e.target.type = 'date';
+                    e.target.placeholder = '';
+                  }}
+                  onBlur={(e) => {
+                    if (!e.target.value) {
+                      e.target.type = 'text';
+                      e.target.placeholder = 'Data de Nascimento';
+                    }
+                  }}
                   onChange={handleInputChange}
                 />
               </div>
             </div>
 
             <div className="row mb-3">
-              <label className="col-sm4 col-form-label">Senha</label>
               <div className="col-sm-8">
                 <input
                   name="senha"

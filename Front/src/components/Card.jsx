@@ -1,33 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import style from './Card.module.css';
 
-const Card = ({ title, imgSrc2, desc, value }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleShowModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+const Card = ({ title, imgSrc2, desc, value, id }) => {
+  const maxDescLength = 100;
 
   const renderDescription = () => {
-    const maxDescLength = 100;
     if (desc.length > maxDescLength) {
-      return (
-        <>
-          {desc.substring(0, maxDescLength)}...
-          <br />
-          <span className={style.readMore} onClick={handleShowModal}>
-            Mostrar mais
-          </span>
-          <br />
-        </>
-      );
+      return desc.substring(0, maxDescLength) + '...';
     } else {
       return desc;
     }
@@ -36,7 +17,7 @@ const Card = ({ title, imgSrc2, desc, value }) => {
   return (
     <div className={style.wrapCard}>
       <div className={style.Card}>
-        <h2 className={style.cardTitle}>{title}</h2>
+        <h3 className={style.cardTitle}>{title || 'Título Desconhecido'}</h3>
         <img
           className={style.img2}
           src={imgSrc2}
@@ -44,9 +25,11 @@ const Card = ({ title, imgSrc2, desc, value }) => {
           width={150}
           height="auto"
         />
+        <br />
         <div className={style.cardBody}>
           <p className={style.cardText}>{renderDescription()}</p>
-          <p>{value}</p>
+          <p>{value || 'Sem informação adicional'}</p>
+          <Link to={`/book/${id}`}>Ler mais</Link>
         </div>
       </div>
 

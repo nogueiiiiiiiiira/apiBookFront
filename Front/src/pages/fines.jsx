@@ -49,6 +49,8 @@ function FineList(props) {
   }
 
   function deleteFine(id) {
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar esta multa?");
+    if (confirmDelete) {
     apiBiblioteca.delete(`/fines/${id}`)
     .then((response) => {
         if (!response.ok) {
@@ -59,7 +61,7 @@ function FineList(props) {
       })
     .catch((error) => console.error(error));
   }
-
+}
   return (
     <>
       <h2 className="text-center mb-3">Lista de Multas</h2>
@@ -129,6 +131,8 @@ function FineForm(props) {
   const handlePayFine = async (event) => {
     event.preventDefault();
     try {
+      const confirmPay = window.confirm("Tem certeza que deseja pagar esta multa?");
+      if (confirmPay) {
       const response = await apiBiblioteca.put('/payFine', {
         cpf: cpf,
         idLivro: idLivro,
@@ -138,10 +142,12 @@ function FineForm(props) {
       } else {
         setErrorMessage('Erro ao pagar multa');
       }
+    }
     } catch (error) {
       setErrorMessage('Erro ao pagar multa');
     }
-  };
+;
+}
 
   return (
     <>
@@ -156,10 +162,9 @@ function FineForm(props) {
             {errorMessage}
           </div>
         )}
+        <br />
         <form onSubmit={handlePayFine}>
-
           <div className="row mb-3">
-            <label className="col-sm-4 col-form-label">CPF do Leitor</label>
             <div className="col-sm-8">
               <input
                 name="cpf"
@@ -173,7 +178,6 @@ function FineForm(props) {
           </div>
 
           <div className="row mb-3">
-            <label className="col-sm-4 col-form-label">ID do Livro</label>
             <div className="col-sm-8">
               <input
                 name="idLivro"
